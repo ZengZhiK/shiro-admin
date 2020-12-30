@@ -141,7 +141,7 @@ public class JwtTokenUtils {
      */
     public static String getUserName(String token) {
         Claims claims = getClaimsFromToken(token);
-        return (String) claims.get(JwtConstants.JWT_USERNAME_KEY);
+        return (String) claims.get(JwtConstants.JWT_USERNAME);
     }
 
     /**

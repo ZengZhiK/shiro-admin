@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Swagger配置
+ *
  * @author zzk
  * @create 2020-12-21 10:20
  */
@@ -32,9 +34,9 @@ public class SwaggerConfig {
         List<Parameter> params = new ArrayList<>();
         ParameterBuilder accessTokenBuilder = new ParameterBuilder();
         ParameterBuilder refreshTokenBuilder = new ParameterBuilder();
-        accessTokenBuilder.name("accessToken").description("令牌")
+        accessTokenBuilder.name("accessToken").description("Access Token")
                 .modelRef(new ModelRef("String")).parameterType("header").required(false);
-        refreshTokenBuilder.name("refreshToken").description("刷新令牌")
+        refreshTokenBuilder.name("refreshToken").description("Refresh Token")
                 .modelRef(new ModelRef("String")).parameterType("header").required(false);
         params.add(accessTokenBuilder.build());
         params.add(refreshTokenBuilder.build());

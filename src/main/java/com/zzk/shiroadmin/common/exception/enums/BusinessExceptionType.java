@@ -13,8 +13,13 @@ import lombok.Getter;
 @Getter
 public enum BusinessExceptionType {
     USER_INPUT_ERROR(400, "您输入的数据错误!"),
+    ACCOUNT_NOT_EXIST_ERROR(400, "账号不存在，请注册！"),
+    ACCOUNT_LOCKED_ERROR(400, "账号被锁定，请联系管理员"),
+    ACCOUNT_PASSWORD_ERROR(400, "用户名或密码错误！"),
+    TOKEN_IS_NULL_ERROR(401, "令牌为空，请登录！"),
+    AUTHENTICATION_ERROR(401, "令牌有误，用户身份认证失败！"),
     AUTHORIZATION_ERROR(401, "您没有权限访问资源！"),
-    AUTHENTICATION_ERROR(401, "用户身份认证失败！"),
+    TOKEN_PAST_DUE_ERROR(401, "令牌失效，请刷新令牌！"),
     SYSTEM_ERROR(500, "系统出现异常，请您稍后再试或联系管理员！");
 
     /**

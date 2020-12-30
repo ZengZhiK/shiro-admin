@@ -56,6 +56,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public AjaxResponse handleBindException(BindException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
+        assert fieldError != null;
         log.error("参数校验错误: {}", fieldError.getDefaultMessage());
         return AjaxResponse.error(new BusinessException(BusinessExceptionType.USER_INPUT_ERROR,
                 fieldError.getDefaultMessage()));

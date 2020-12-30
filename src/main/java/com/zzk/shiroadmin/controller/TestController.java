@@ -2,13 +2,15 @@ package com.zzk.shiroadmin.controller;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.common.annotation.ModelView;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
+import com.zzk.shiroadmin.common.utils.RedisUtils;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author zzk
@@ -18,10 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/test")
 @Api(tags = "测试接口", description = "脚手架测试接口")
 public class TestController {
+    @Autowired
+    private RedisUtils redisUtils;
+
     @LogPrint(description = "返回对象测试")
+    @ApiOperation("返回对象测试接口")
     @GetMapping("/obj")
     @ResponseBody
-    @ApiOperation("返回对象测试接口")
     public SysUser user() {
 //        if (1 == 1) {
 //            throw new BusinessException(BusinessExceptionType.USER_INPUT_ERROR);
@@ -34,14 +39,23 @@ public class TestController {
     }
 
     @LogPrint(description = "返回视图测试")
+    @ApiOperation("返回视图测试接口")
     @GetMapping("hello")
     @ModelView
-    @ApiOperation("返回视图测试接口")
     public String hello() {
 //        if (1 == 1) {
 //            throw new BusinessException(BusinessExceptionType.USER_INPUT_ERROR);
 //        }
 
         return "hello";
+    }
+
+    @LogPrint(description = "用户权限测试")
+    @ApiOperation(value = "用户权限测试接口")
+    @RequiresPermissions("sys:user:list")
+    @GetMapping("/users-list")
+    @ResponseBody
+    public AjaxResponse pageInfo() {
+        return AjaxResponse.success("访问成功");
     }
 }
