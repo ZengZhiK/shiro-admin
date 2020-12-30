@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title, links, styles)">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="description" content=""/>
+  <meta name="keywords" content=""/>
+  <title th:replace="${title}"></title>
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.ico}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+  <th:block th:replace="${links}"/>
+  <th:block th:replace="${styles}" />
+</head>

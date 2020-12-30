@@ -1,6 +1,5 @@
 package com.zzk.shiroadmin.common.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -30,20 +29,18 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
                                   Class selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        //如果响应结果是JSON数据类型
+        // 如果响应结果是JSON数据类型
         if (selectedContentType.equalsTypeAndSubtype(MediaType.APPLICATION_JSON)) {
             if (body instanceof AjaxResponse) {
-                // 如果响应结果是AjaxResponse，则说明系统抛出异常，需要改变一下Http返回状态码
-                AjaxResponse ajaxResponse = (AjaxResponse) body;
-                response.setStatusCode(HttpStatus.valueOf(ajaxResponse.getCode()));
+                // 如果响应结果是AjaxResponse，直接返回即可
                 return body;
             } else {
-                // 如果响应结果是对象，需要进行封装
-                response.setStatusCode(HttpStatus.OK);
+                // 如果响应结果是其他对象，需要进行封装
                 return AjaxResponse.success(body);
             }
         }
 
+        // 如果响应结果是其它数据类型
         return body;
     }
 }

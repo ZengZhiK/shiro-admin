@@ -51,6 +51,9 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilters(linkedHashMap);
 
         LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
+        // view
+        hashMap.put("/view/**", "anon");
+        // api
         hashMap.put("/api/user/login", "anon");
         // 开放swagger-ui地址
         hashMap.put("/swagger/**", "anon");
@@ -59,12 +62,19 @@ public class ShiroConfig {
         hashMap.put("/swagger-resources/**", "anon");
         hashMap.put("/csrf", "anon");
         hashMap.put("/", "anon");
-        // 静态资源
         hashMap.put("/webjars/**", "anon");
-        hashMap.put("/favicon.ico", "anon");
-//        hashMap.put("/captcha.jpg", "anon");
         // druid sql监控配置
         hashMap.put("/druid/**", "anon");
+
+        // 静态资源
+//        hashMap.put("/favicon.ico", "anon");
+        hashMap.put("/layui/**", "anon");
+        hashMap.put("/images/**", "anon");
+        hashMap.put("/css/**", "anon");
+        hashMap.put("/js/**", "anon");
+
+        // 测试资源
+        hashMap.put("/test/**", "anon");
 
         hashMap.put("/**", "token,authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(hashMap);

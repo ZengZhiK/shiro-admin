@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
         //将异常信息设置如modelAndView
         modelAndView.addObject("url", req.getRequestURL());
         modelAndView.addObject("exception", e.toString());
-        modelAndView.setViewName("error");
+        modelAndView.setViewName("error/500");
 
         //返回ModelAndView
         return modelAndView;
