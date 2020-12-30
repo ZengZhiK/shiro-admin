@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
+ * 视图 前端控制器
+ *
  * @author zzk
  * @create 2020-12-30 14:44
  */
