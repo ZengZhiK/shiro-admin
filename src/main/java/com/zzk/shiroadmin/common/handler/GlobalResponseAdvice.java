@@ -40,7 +40,7 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
             }
         }
 
-        // 如果响应结果是其它数据类型
+        // 如果响应结果是其它数据类型，例如ModelAndView和字符串
         return body;
     }
 }
