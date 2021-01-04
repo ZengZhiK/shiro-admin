@@ -9,6 +9,8 @@
   <title th:replace="${title}"></title>
   <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.ico}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+  <script th:src="@{/layui/layui.js}"></script>
+  <script th:src="@{/js/core.util.js}"></script>
   <th:block th:replace="${links}"/>
-  <th:block th:replace="${styles}" />
+  <th:block th:replace="${styles}"/>
 </head>

@@ -53,24 +53,23 @@
   </div>
 </div>
 </body>
-<script th:src="@{/layui/layui.js}"></script>
-<script th:src="@{/js/core.util.js}"></script>
 <script>
   layui.use(['jquery', 'form', 'carousel'], function () {
     var $ = layui.jquery;
     var layer = layui.layer;
     var form = layui.form;
     var carousel = layui.carousel;
+    // 请求登录接口
     form.on('submit', function (data) {
       CoreUtil.sendAjax("/api/user/login", JSON.stringify(data.field), function (res) {
-        layer.msg(res.msg);
+        layer.msg("登录成功！");
         CoreUtil.setData("access_token", res.data.accessToken);
         CoreUtil.setData("refresh_token", res.data.refreshToken);
-        // window.location.href = "/view/home";
+        window.location.href = "/view/home";
       }, "POST");
       return false;
     });
-    //改变下时间间隔、动画类型、高度
+    // 轮播图：改变下时间间隔、动画类型、高度
     carousel.render({
       elem: '#carousel',
       interval: 10000,

@@ -44,4 +44,20 @@ public class ViewController {
     public String login() {
         return "login";
     }
+
+    /**
+     * 跳转至主页页面
+     */
+    @GetMapping("/home")
+    public String home() {
+        return "home";
+    }
+
+    /**
+     * 获取主页主体内容
+     */
+    @GetMapping("/main")
+    public String main() {
+        return "main";
+    }
 }
