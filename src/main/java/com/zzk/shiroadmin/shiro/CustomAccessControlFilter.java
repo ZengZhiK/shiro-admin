@@ -35,6 +35,9 @@ public class CustomAccessControlFilter extends AccessControlFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+        log.info("Shiro拦截      : {}", request.getRequestURL());
+
         String accessToken = request.getHeader(ShiroConstants.ACCESS_TOKEN);
 
         try {

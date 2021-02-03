@@ -60,4 +60,12 @@ public class ViewController {
     public String main() {
         return "main";
     }
+
+    /**
+     * 跳转至菜单权限管理页面
+     */
+    @GetMapping("/menus")
+    public String menu() {
+        return "menus/menu";
+    }
 }

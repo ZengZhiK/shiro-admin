@@ -50,34 +50,35 @@ public class ShiroConfig {
         linkedHashMap.put("token", new CustomAccessControlFilter());
         shiroFilterFactoryBean.setFilters(linkedHashMap);
 
-        LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         // view
-        hashMap.put("/view/**", "anon");
+        filterChainDefinitionMap.put("/view/**", "anon");
         // api
-        hashMap.put("/api/user/login", "anon");
+        filterChainDefinitionMap.put("/api/user/login", "anon");
         // 开放swagger-ui地址
-        hashMap.put("/swagger/**", "anon");
-        hashMap.put("/v2/api-docs", "anon");
-        hashMap.put("/swagger-ui.html", "anon");
-        hashMap.put("/swagger-resources/**", "anon");
-        hashMap.put("/csrf", "anon");
-        hashMap.put("/", "anon");
-        hashMap.put("/webjars/**", "anon");
+        filterChainDefinitionMap.put("/swagger/**", "anon");
+        filterChainDefinitionMap.put("/v2/api-docs", "anon");
+        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/**", "anon");
+        filterChainDefinitionMap.put("/csrf", "anon");
+        filterChainDefinitionMap.put("/", "anon");
+        filterChainDefinitionMap.put("/webjars/**", "anon");
         // druid sql监控配置
-        hashMap.put("/druid/**", "anon");
+        filterChainDefinitionMap.put("/druid/**", "anon");
 
         // 静态资源
 //        hashMap.put("/favicon.ico", "anon");
-        hashMap.put("/layui/**", "anon");
-        hashMap.put("/images/**", "anon");
-        hashMap.put("/css/**", "anon");
-        hashMap.put("/js/**", "anon");
+        filterChainDefinitionMap.put("/images/**", "anon");
+        filterChainDefinitionMap.put("/css/**", "anon");
+        filterChainDefinitionMap.put("/js/**", "anon");
+        filterChainDefinitionMap.put("/layui/**", "anon");
+        filterChainDefinitionMap.put("/treetable-lay/**", "anon");
 
         // 测试资源
-        hashMap.put("/test/**", "anon");
+        filterChainDefinitionMap.put("/test/**", "anon");
 
-        hashMap.put("/**", "token,authc");
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(hashMap);
+        filterChainDefinitionMap.put("/**", "token,authc");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
 

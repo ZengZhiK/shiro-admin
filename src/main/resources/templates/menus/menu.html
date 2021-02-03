@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title}, ~{}, ~{})">
+  <title>菜单权限-ShiroAdmin</title>
+</head>
+<body>
+<div class="menu-table">
+  <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
+</div>
+</body>
+<script>
+  layui.config({
+    base: '/'
+  }).extend({
+    treetable: 'treetable-lay/treetable'
+  }).use(['treetable', 'table', 'tree', 'jquery', 'form'], function () {
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var form = layui.form;
+    var treetable = layui.treetable;
+
+    // 设置主体内容层高度
+    frameWH();
+
+    /**
+     * 设置主体内容层高度
+     */
+    function frameWH() {
+      var h = $(window).height() - 41 - 10 - 35 - 10 - 44 - 10;
+      $("iframe").css("height", h + "px");
+    };
+
+    /*获取所有的菜单权限数据*/
+    CoreUtil.sendAjax("/api/permission", null, function (res) {
+      renderTable(res.data);
+    }, "GET", false);
+    /*初始化菜单权限列表数据*/
+    var renderTable = function (data) {
+      treetable.render({
+        // 渲染表格
+        data: data,
+        treeColIndex: 1, // 树形图标显示在第几列
+        treeSpid: 0, // 最上级的父级id
+        treeIdName: 'id', // id字段的名称
+        treePidName: 'pid', // pid字段的名称
+        treeDefaultClose: false, // 是否默认折叠
+        treeLinkage: false, // 父级展开时是否自动展开所有子级
+        elem: '#menuTable', // 表格id
+        page: false, // 树形表格一般是没有分页的
+        cols: [
+          [
+            {type: 'numbers'},
+            {field: 'name', title: '菜单名称'},
+            {field: 'url', title: 'url'},
+            {field: 'method', title: '请求方式'},
+            {
+              field: 'type', title: '类型', templet: function (item) {
+                if (item.type === 1) {
+                  return ' <a class="layui-btn layui-btn-xs" >目录</a>';
+                }
+                if (item.type === 2) {
+                  return '<a class="layui-btn layui-btn-xs layui-btn-normal" >菜单< /a>';
+                }
+                if (item.type === 3) {
+                  return '<a class="layui-btn layui-btn-xs layui-btn-warm " >按钮</a>';
+                }
+              }
+            },
+            {field: 'pidName', title: '父级名称'},
+            {field: 'orderNum', title: '排序'},
+            {field: 'perms', title: '资源标识'},
+            {field: 'code', title: '前后端分离按钮控制标识'},
+            {
+              field: 'createTime', title: '创建时间', minWidth: 120, templet: function (item) {
+                return CoreUtil.formattime(item.createTime);
+              }
+            },
+            {
+              field: 'status', title: '状态', templet: function (item) {
+                if (item.status === 1) {
+                  return ' <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" checked disabled>';
+                }
+                if (item.status === 0) {
+                  return ' <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" disabled>';
+                }
+              }
+            },
+            {title: '操作', width: 180}
+          ]
+        ]
+      });
+    }
+  });
+</script>
+</html>
