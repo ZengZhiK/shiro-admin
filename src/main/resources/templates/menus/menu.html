@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_fragments :: head(~{::title}, ~{}, ~{})">
+<head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
   <title>菜单权限-ShiroAdmin</title>
+  <link rel="stylesheet" th:href="@{/css/custom.form.css}">
 </head>
 <body>
+<!-- 权限表格 -->
 <div class="menu-table">
   <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
 </div>
+<!-- 权限树 -->
+<div id="menuTree"></div>
 </body>
 <script>
   layui.config({
@@ -18,6 +22,9 @@
     var $ = layui.jquery;
     var form = layui.form;
     var treetable = layui.treetable;
+    var tree = layui.tree;
+    /*用来记录菜单权限树选中*/
+    var selectNode = null;
 
     // 设置主体内容层高度
     frameWH();
@@ -90,6 +97,28 @@
         ]
       });
     }
+
+    //初始化菜单权限树
+    var initTree = function () {
+      CoreUtil.sendAjax("/api/permission/tree", null, function (res) {
+        loadPermissionTree(res.data);
+      }, "GET", false);
+    };
+    //加载菜单权限数据
+    var loadPermissionTree = function (data) {
+      //仅节点左侧图标控制收缩
+      tree.render({
+        elem: '#menuTree'
+        , data: data
+        , onlyIconControl: true //是否仅允许节点左侧图标控制展开收缩
+        , click: function (obj) {
+          /*记录选中的目录菜单*/
+          selectNode = obj;
+          layer.msg(JSON.stringify(obj.data.title));
+        }
+      });
+    };
+    initTree();
   });
 </script>
 </html>

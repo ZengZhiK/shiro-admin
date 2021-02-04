@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysPermission;
+import com.zzk.shiroadmin.model.vo.resp.PermissionRespNodeVO;
 
 import java.util.List;
 
@@ -25,4 +26,7 @@ public interface PermissionService {
      * @return
      */
     SysPermission selectByPrimaryKey(String id);
+
+
+    List<PermissionRespNodeVO> selectAllPermissionByTree();
 }

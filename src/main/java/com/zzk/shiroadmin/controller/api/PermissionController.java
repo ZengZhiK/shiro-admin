@@ -2,6 +2,7 @@ package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.model.entity.SysPermission;
+import com.zzk.shiroadmin.model.vo.resp.PermissionRespNodeVO;
 import com.zzk.shiroadmin.service.PermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public class PermissionController {
     @LogPrint(description = "权限数据获取接口")
     @ApiOperation(value = "权限数据获取接口")
     @GetMapping
-    public List<SysPermission> getAllPermission(HttpServletRequest request) {
+    public List<SysPermission> getAllPermission() {
         List<SysPermission> permissionList = permissionService.selectAll();
         if (!permissionList.isEmpty()) {
             for (SysPermission permission : permissionList) {
@@ -41,5 +41,13 @@ public class PermissionController {
         }
 
         return permissionList;
+    }
+
+
+    @LogPrint(description = "权限树获取接口")
+    @ApiOperation(value = "权限树获取接口")
+    @GetMapping("/tree")
+    public List<PermissionRespNodeVO> getAllPermissionTreeExcludeBtn() {
+        return permissionService.selectAllPermissionByTree();
     }
 }
