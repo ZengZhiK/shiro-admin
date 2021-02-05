@@ -1,7 +1,8 @@
 package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysPermission;
-import com.zzk.shiroadmin.model.vo.resp.PermissionRespNodeVO;
+import com.zzk.shiroadmin.model.vo.req.PermissionAddReqVO;
+import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 
 import java.util.List;
 
@@ -27,6 +28,26 @@ public interface PermissionService {
      */
     SysPermission selectByPrimaryKey(String id);
 
+    /**
+     * 获取菜单节点树
+     *
+     * @return
+     */
+    List<MenuRespNodeVO> selectMenuByTree();
 
-    List<PermissionRespNodeVO> selectAllPermissionByTree();
+    /**
+     * 保存菜单权限
+     *
+     * @param vo
+     * @return
+     */
+    SysPermission addPermission(PermissionAddReqVO vo);
+
+    /**
+     * 根据用户id获取主页侧边栏目录、菜单
+     *
+     * @param userId
+     * @return
+     */
+    List<MenuRespNodeVO> selectMenuForHome(String userId);
 }

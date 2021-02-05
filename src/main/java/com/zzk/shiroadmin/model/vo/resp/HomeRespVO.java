@@ -19,5 +19,5 @@ public class HomeRespVO {
     private UserInfoRespVO userInfo;
 
     @ApiModelProperty(value = "目录菜单")
-    private List<MenuRespVO> menus;
+    private List<MenuRespNodeVO> menus;
 }

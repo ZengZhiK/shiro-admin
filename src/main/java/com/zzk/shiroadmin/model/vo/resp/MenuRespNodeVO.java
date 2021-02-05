@@ -6,21 +6,24 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 权限数结点 响应VO
+ * 菜单节点 响应VO
  *
  * @author zzk
- * @create 2021-02-04 9:39
+ * @create 2021-01-01 21:34
  */
 @Data
-public class PermissionRespNodeVO {
+public class MenuRespNodeVO {
     @ApiModelProperty(value = "id")
     private String id;
 
-    @ApiModelProperty(value = "权限名称")
+    @ApiModelProperty(value = "菜单名称")
     private String title;
 
-    @ApiModelProperty(value = "子权限")
-    private List<PermissionRespNodeVO> children;
+    @ApiModelProperty(value = "接口地址")
+    private String url;
+
+    @ApiModelProperty(value = "子菜单")
+    private List<MenuRespNodeVO> children;
 
     @ApiModelProperty(value = "默认展开")
     private boolean spread = true;
