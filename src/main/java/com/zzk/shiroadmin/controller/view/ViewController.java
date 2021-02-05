@@ -68,4 +68,12 @@ public class ViewController {
     public String menu() {
         return "menus/menu";
     }
+
+    /**
+     * 跳转至角色管理页面
+     */
+    @GetMapping("/roles")
+    public String role() {
+        return "roles/role";
+    }
 }

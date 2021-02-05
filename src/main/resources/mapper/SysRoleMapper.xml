@@ -14,7 +14,7 @@
     id, `name`, description, `status`, create_time, update_time, deleted
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from sys_role
     where id = #{id,jdbcType=VARCHAR}
@@ -114,4 +114,11 @@
       deleted = #{deleted,jdbcType=TINYINT}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+    <!-- 根据条件查询所有的角色数据 -->
+    <select id="selectAll" parameterType="com.zzk.shiroadmin.model.vo.req.RolePageReqVO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_role
+        where deleted = 1
+    </select>
 </mapper>

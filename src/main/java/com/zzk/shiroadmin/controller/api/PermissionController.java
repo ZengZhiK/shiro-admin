@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * 权限前端控制器
+ * 权限 前端控制器
  *
  * @author zzk
  * @create 2021-02-03 23:15
