@@ -43,19 +43,25 @@ public class PermissionController {
         return permissionList;
     }
 
-
-    @LogPrint(description = "权限树获取接口")
-    @ApiOperation(value = "权限树获取接口")
+    @LogPrint(description = "权限树获取接口-不包括按钮")
+    @ApiOperation(value = "权限树获取接口-不包括按钮")
     @GetMapping("/tree")
     public List<MenuRespNodeVO> getAllPermissionTreeExcludeBtn() {
         return permissionService.selectMenuByTree();
     }
 
+    @LogPrint(description = "权限树获取接口-包括按钮")
+    @ApiOperation(value = "权限树获取接口-包括按钮")
+    @GetMapping("/tree/all")
+    public List<MenuRespNodeVO> getAllPermissionTree() {
+        return permissionService.selectAllTree();
+    }
+
+
     @LogPrint(description = "新增菜单权限接口")
     @ApiOperation(value = "新增菜单权限接口")
-    @PostMapping
+    @PostMapping("/add")
     public SysPermission addPermission(@RequestBody @Valid PermissionAddReqVO vo) {
-        SysPermission permission = permissionService.addPermission(vo);
-        return permission;
+        return permissionService.addPermission(vo);
     }
 }

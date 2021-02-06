@@ -11,7 +11,7 @@
     id, role_id, permission_id, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from sys_role_permission
     where id = #{id,jdbcType=VARCHAR}
@@ -79,4 +79,28 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <!-- 批量插入角色和菜单权限关联数据 -->
+  <insert id="batchInsertRolePermission" parameterType="com.zzk.shiroadmin.model.relation.RolePermissionRelation">
+      insert into sys_role_permission(
+        id,
+        role_id,
+        permission_id,
+        create_time
+      )
+      values
+      <foreach collection="rolePermissionList" item="item" separator=",">
+        (
+          #{item.id},
+          #{item.roleId},
+          #{item.permissionId},
+          #{item.createTime}
+        )
+      </foreach>
+  </insert>
+  <!-- 通过角色id删除关联数据 -->
+  <delete id="removeByRoleId">
+    delete
+    from sys_role_permission
+    where role_id=#{roleId}
+  </delete>
 </mapper>

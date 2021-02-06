@@ -47,33 +47,50 @@ public class PermissionServiceImpl implements PermissionService {
         MenuRespNodeVO menuRespNode = new MenuRespNodeVO();
         menuRespNode.setId("0");
         menuRespNode.setTitle("默认顶级菜单");
-        menuRespNode.setChildren(getTree(permissionList));
+        menuRespNode.setChildren(getTree(permissionList, false));
         result.add(menuRespNode);
 
         return result;
     }
 
+    @Override
+    public List<MenuRespNodeVO> selectMenuForHome(String userId) {
+        return getTree(sysPermissionMapper.selectAll(), false);
+    }
+
+    @Override
+    public List<MenuRespNodeVO> selectAllTree() {
+        return getTree(sysPermissionMapper.selectAll(), true);
+    }
+
     /**
-     * 递归生成权限树，只递归到菜单，排除按钮
+     * 递归生成菜单权限树，
      *
      * @param permissionList
+     * @param hasBtn         true 递归遍历到按钮，false 递归遍历到菜单
      * @return
      */
-    private List<MenuRespNodeVO> getTree(List<SysPermission> permissionList) {
-        List<MenuRespNodeVO> result = new ArrayList<>();
+    private List<MenuRespNodeVO> getTree(List<SysPermission> permissionList, boolean hasBtn) {
+
+        List<MenuRespNodeVO> list = new ArrayList<>();
         if (permissionList == null || permissionList.isEmpty()) {
-            return result;
+            return list;
         }
-        for (SysPermission permission : permissionList) {
-            if (permission.getPid().equals("0")) {
+        for (SysPermission sysPermission : permissionList) {
+            if (sysPermission.getPid().equals("0")) {
                 MenuRespNodeVO menuRespNode = new MenuRespNodeVO();
-                BeanUtils.copyProperties(permission, menuRespNode);
-                menuRespNode.setTitle(permission.getName());
-                menuRespNode.setChildren(getChildExcludeBtn(permission.getId(), permissionList));
-                result.add(menuRespNode);
+                BeanUtils.copyProperties(sysPermission, menuRespNode);
+                menuRespNode.setTitle(sysPermission.getName());
+                if (hasBtn) {
+                    menuRespNode.setChildren(getChild(sysPermission.getId(), permissionList));
+                } else {
+                    menuRespNode.setChildren(getChildExcludeBtn(sysPermission.getId(), permissionList));
+                }
+
+                list.add(menuRespNode);
             }
         }
-        return result;
+        return list;
     }
 
     /**
@@ -91,6 +108,27 @@ public class PermissionServiceImpl implements PermissionService {
                 BeanUtils.copyProperties(permission, menuRespNode);
                 menuRespNode.setTitle(permission.getName());
                 menuRespNode.setChildren(getChildExcludeBtn(permission.getId(), permissionList));
+                list.add(menuRespNode);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 递归到按钮
+     *
+     * @param id
+     * @param permissionList
+     * @return
+     */
+    private List<MenuRespNodeVO> getChild(String id, List<SysPermission> permissionList) {
+        List<MenuRespNodeVO> list = new ArrayList<>();
+        for (SysPermission s : permissionList) {
+            if (s.getPid().equals(id)) {
+                MenuRespNodeVO menuRespNode = new MenuRespNodeVO();
+                BeanUtils.copyProperties(s, menuRespNode);
+                menuRespNode.setTitle(s.getName());
+                menuRespNode.setChildren(getChild(s.getId(), permissionList));
                 list.add(menuRespNode);
             }
         }
@@ -154,10 +192,5 @@ public class PermissionServiceImpl implements PermissionService {
                 }
                 break;
         }
-    }
-
-    @Override
-    public List<MenuRespNodeVO> selectMenuForHome(String userId) {
-        return getTree(sysPermissionMapper.selectAll());
     }
 }

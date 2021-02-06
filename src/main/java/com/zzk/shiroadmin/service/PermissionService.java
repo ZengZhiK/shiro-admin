@@ -28,12 +28,6 @@ public interface PermissionService {
      */
     SysPermission selectByPrimaryKey(String id);
 
-    /**
-     * 获取菜单节点树
-     *
-     * @return
-     */
-    List<MenuRespNodeVO> selectMenuByTree();
 
     /**
      * 保存菜单权限
@@ -50,4 +44,18 @@ public interface PermissionService {
      * @return
      */
     List<MenuRespNodeVO> selectMenuForHome(String userId);
+
+    /**
+     * 查询权限菜单，不包括按钮
+     *
+     * @return
+     */
+    List<MenuRespNodeVO> selectMenuByTree();
+
+    /**
+     * 查询所有权限菜单，按树形结构返回
+     *
+     * @return
+     */
+    List<MenuRespNodeVO> selectAllTree();
 }

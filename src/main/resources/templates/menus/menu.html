@@ -5,7 +5,11 @@
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
 </head>
 <body>
-<!-- 权限编辑窗口 -->
+<!-- 菜单表格：按树形结构显示 -->
+<div class="menu-table">
+  <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
+</div>
+<!-- 菜单新增表单：可新增目录、菜单、按钮 -->
 <div class="panel panel-default operation_menu" hidden>
   <div class="panel-heading title"></div>
   <div class="layui-card-body">
@@ -82,13 +86,10 @@
     </form>
   </div>
 </div>
-<!-- 权限表格 -->
-<div class="menu-table">
-  <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
-</div>
-<!-- 权限树 -->
+<!-- 菜单树：目录 > 菜单 -->
 <div id="menuTree" style="display: none"></div>
 </body>
+<!-- 菜单新增按钮：点击打开菜单新增表单 -->
 <script type="text/html" id="toolbar">
   <div class="layui-btn-group">
     <button type="button" class="layui-btn" lay-event="addMenu">
@@ -302,7 +303,7 @@
     form.on('submit(submit)', function (data) {
       //新增
       if (data.field.id === undefined || data.field.id === null || data.field.id === "") {
-        CoreUtil.sendAjax("/api/permission", JSON.stringify(data.field), function (res) {
+        CoreUtil.sendAjax("/api/permission/add", JSON.stringify(data.field), function (res) {
           reloadTreeTable();
           //隐藏表格
           $(".menu-table").show();

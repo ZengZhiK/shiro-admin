@@ -3,6 +3,7 @@ package com.zzk.shiroadmin.controller.api;
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.entity.SysRole;
+import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.PermissionService;
@@ -33,5 +34,12 @@ public class RoleController {
     @PostMapping
     public PageVO<SysRole> rolePageInfo(@RequestBody @Valid RolePageReqVO vo) {
         return roleService.pageInfo(vo);
+    }
+
+    @LogPrint(description = "新增角色接口")
+    @ApiOperation(value = "新增角色接口")
+    @PostMapping("/add")
+    public SysRole addRole(@RequestBody @Valid RoleAddReqVO vo) {
+        return roleService.addRole(vo);
     }
 }

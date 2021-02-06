@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysRole;
+import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 
@@ -11,5 +12,19 @@ import com.zzk.shiroadmin.model.vo.resp.PageVO;
  * @create 2021-02-05 19:45
  */
 public interface RoleService {
+    /**
+     * 分页返回角色数据
+     *
+     * @param vo
+     * @return
+     */
     PageVO<SysRole> pageInfo(RolePageReqVO vo);
+
+    /**
+     * 增加新角色，并保存其权限
+     *
+     * @param vo
+     * @return
+     */
+    SysRole addRole(RoleAddReqVO vo);
 }
