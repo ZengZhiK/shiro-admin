@@ -21,18 +21,18 @@ public class RolePageReqVO {
     @Min(value = 1, message = "当前页的数量必须大于1")
     private int pageSize;
 
-//    @ApiModelProperty(value = "角色id")
-//    private String roleId;
-//
-//    @ApiModelProperty(value = "角色名称")
-//    private String roleName;
-//
-//    @ApiModelProperty(value = "角色状态")
-//    private Integer status;
-//
-//    @ApiModelProperty(value = "开始时间")
-//    private String startTime;
-//
-//    @ApiModelProperty(value = "结束时间")
-//    private String endTime;
+    @ApiModelProperty(value = "角色id")
+    private String roleId;
+
+    @ApiModelProperty(value = "角色名称")
+    private String roleName;
+
+    @ApiModelProperty(value = "角色状态")
+    private Integer status;
+
+    @ApiModelProperty(value = "开始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
 }

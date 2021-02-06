@@ -7,6 +7,30 @@
 <body>
 <!-- 角色表格 -->
 <div class="role_table_div">
+  <div id="searchParam">
+    <div class="layui-form-item">
+      <div class="layui-input-inline">
+        <input type="text" id="roleId" class="layui-input" autocomplete="off" placeholder="请输入角色ID">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="roleName" class="layui-input" autocomplete="off" placeholder="请输入角色名称">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="createTime" placeholder="创建时间">
+      </div>
+      <div class="layui-input-inline layui-form">
+        <select id="status">
+          <option value="">请选择角色状态</option>
+          <option value="1">正常</option>
+          <option value="0">弃用</option>
+        </select>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn" id="search">查询</button>
+      </div>
+    </div>
+
+  </div>
   <table class="layui-hide" id="role_table" lay-filter="role_table"></table>
   <div id="laypage" class="layui-laypage-btn"></div>
 </div>
@@ -69,11 +93,17 @@
     var layer = layui.layer;
     var $ = layui.jquery;
     var tree = layui.tree;
+    var laydate = layui.laydate;
 
     // 查询参数
     var searchParam = {
       pageNum: 1,
-      pageSize: 10
+      pageSize: 10,
+      roleId: null,
+      roleName: null,
+      status: null,
+      startTime: null,
+      endTime: null
     }
 
     /*动态获取数据*/
@@ -252,6 +282,39 @@
       }
       return permissionIds;
     }
+
+    //日期范围
+    laydate.render({
+      elem: '#createTime'
+      , type: 'datetime'
+      , range: '~'
+      , done: function (value, date, endDate) {
+        if (value != null && value != undefined && value != "") {
+          searchParam.startTime = value.split("~")[0];
+          searchParam.endTime = value.split("~")[1];
+        } else {
+          //清空时间的时候要清空以前选择的日期
+          searchParam.startTime = null;
+          searchParam.endTime = null;
+        }
+      }
+    });
+
+    //执行查询
+    $("#search").click(function () {
+      searchParam.roleId = $("#roleId").val();
+      searchParam.status = $("#status").val();
+      searchParam.roleName = $("#roleName").val();
+      searchParam.pageNum = 1;
+      CoreUtil.sendAjax("/api/role", JSON.stringify(searchParam), function (res) {
+        //初始化分页器
+        laypageTable(res.data.totalRows, searchParam.pageNum);
+        //初始化渲染数据
+        if (res.data.list != null) {
+          loadTable(res.data.list);
+        }
+      }, "POST", false);
+    });
   });
 </script>
 </html>
