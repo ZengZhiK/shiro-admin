@@ -2,6 +2,8 @@ package com.zzk.shiroadmin.mapper;
 
 import com.zzk.shiroadmin.model.entity.SysDept;
 
+import java.util.List;
+
 public interface SysDeptMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface SysDeptMapper {
     int updateByPrimaryKeySelective(SysDept record);
 
     int updateByPrimaryKey(SysDept record);
+
+    List<SysDept> selectAll();
 }

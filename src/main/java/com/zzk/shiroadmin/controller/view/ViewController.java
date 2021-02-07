@@ -76,4 +76,12 @@ public class ViewController {
     public String role() {
         return "roles/role";
     }
+
+    /**
+     * 跳转至部门管理页面
+     */
+    @GetMapping("/depts")
+    public String dept() {
+        return "depts/dept";
+    }
 }

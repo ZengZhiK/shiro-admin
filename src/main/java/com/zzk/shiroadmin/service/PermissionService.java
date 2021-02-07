@@ -21,15 +21,6 @@ public interface PermissionService {
     List<SysPermission> selectAll();
 
     /**
-     * 根据id查询权限数据
-     *
-     * @param id
-     * @return
-     */
-    SysPermission selectByPrimaryKey(String id);
-
-
-    /**
      * 保存菜单权限
      *
      * @param vo

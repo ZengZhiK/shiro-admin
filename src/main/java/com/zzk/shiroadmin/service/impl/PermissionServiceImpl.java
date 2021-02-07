@@ -30,12 +30,17 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<SysPermission> selectAll() {
-        return sysPermissionMapper.selectAll();
-    }
+        List<SysPermission> permissionList = sysPermissionMapper.selectAll();
+        if (!permissionList.isEmpty()) {
+            for (SysPermission permission : permissionList) {
+                SysPermission parentPermission = sysPermissionMapper.selectByPrimaryKey(permission.getPid());
+                if (parentPermission != null) {
+                    permission.setPidName(parentPermission.getName());
+                }
+            }
+        }
 
-    @Override
-    public SysPermission selectByPrimaryKey(String id) {
-        return sysPermissionMapper.selectByPrimaryKey(id);
+        return permissionList;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     /**
-     * 递归生成菜单权限树，
+     * 递归生成菜单权限树
      *
      * @param permissionList
      * @param hasBtn         true 递归遍历到按钮，false 递归遍历到菜单

@@ -30,17 +30,7 @@ public class PermissionController {
     @ApiOperation(value = "权限数据获取接口")
     @GetMapping
     public List<SysPermission> getAllPermission() {
-        List<SysPermission> permissionList = permissionService.selectAll();
-        if (!permissionList.isEmpty()) {
-            for (SysPermission permission : permissionList) {
-                SysPermission parentPermission = permissionService.selectByPrimaryKey(permission.getPid());
-                if (parentPermission != null) {
-                    permission.setPidName(parentPermission.getName());
-                }
-            }
-        }
-
-        return permissionList;
+        return permissionService.selectAll();
     }
 
     @LogPrint(description = "权限树获取接口-不包括按钮")
@@ -56,7 +46,6 @@ public class PermissionController {
     public List<MenuRespNodeVO> getAllPermissionTree() {
         return permissionService.selectAllTree();
     }
-
 
     @LogPrint(description = "新增菜单权限接口")
     @ApiOperation(value = "新增菜单权限接口")
