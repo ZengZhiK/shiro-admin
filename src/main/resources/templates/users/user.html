@@ -10,7 +10,71 @@
   <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
   <div id="laypage" class="layui-laypage-btn"></div>
 </div>
+<!-- 用户新增表单 -->
+<div class="panel panel-default operation_user" hidden>
+  <div class="panel-heading title"></div>
+  <div class="layui-card-body">
+    <form class="layui-form " action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px">
+      <input name="id" hidden/>
+      <input name="deptId" hidden/>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-block">
+          <input type="username" name="username" placeholder="请输入账号" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">密码</div>
+        <div class="layui-input-block">
+          <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">手机号</div>
+        <div class="layui-input-block">
+          <input type="phone" name="phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">所属部门</div>
+        <div class="layui-input-block">
+          <input type="deptName" name="deptName" placeholder="请选择所属部门" autocomplete="off" class="layui-input"
+                 readonly="readonly" style="background:#eeeeee!important">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+          <input type="checkbox" name="status" lay-skin="switch" lay-filter="switch" lay-text="启用|禁用" checked>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+          <button class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- 部门树 -->
+<div id="deptTree" style="display: none"></div>
 </body>
+<!-- 用户新增按钮：点击打开用户新增表单 -->
+<script type="text/html" id="toolbar">
+  <div class="layui-btn-group">
+    <button type="button" class="layui-btn" lay-event="addNewUser">
+      <i class="layui-icon">&#xe608;</i> 新增用户
+    </button>
+  </div>
+  <div class="layui-btn-group">
+    <button type="button" class="layui-btn" lay-event="batchDeleted">
+      <i class="layui-icon">&#xe608;</i> 批量删除
+    </button>
+  </div>
+</script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree'], function () {
     var table = layui.table;
@@ -18,10 +82,15 @@
     var form = layui.form;
     var layer = layui.layer;
     var $ = layui.jquery;
+    var tree = layui.tree;
+
     var searchParam = {
       pageNum: 1,
       pageSize: 10
     }
+
+    /*用来记录部门权限树选中*/
+    var selectNode = null;
 
     /*动态获取数据*/
     CoreUtil.sendAjax("/api/user", JSON.stringify(searchParam), function (res) {
@@ -122,8 +191,109 @@
         , even: true
         , limit: data.length
         , limits: [10, 20, 30, 40, 50]
+        , toolbar: '#toolbar'
       });
     };
+
+    //表头工具栏事件
+    table.on('toolbar(user_table)', function (obj) {
+      switch (obj.event) {
+        case 'addNewUser':
+          $(".title").html("新增用户");
+          $(".user_table_div").hide();
+          $(".operation_user").show();
+          $(".operation_user input[name=id]").val("");
+          $(".operation_user input[name=pid]").val("");
+          $(".operation_user input[name=username]").val("");
+          $(".operation_user input[name=password]").val("");
+          $(".operation_user input[name=phone]").val("");
+          $(".operation_user input[name=deptName]").val("");
+          $(".operation_user input[name=status]").attr('checked', 'checked');
+          $(".operation_user input[name=status]").attr('type', 'hidden').val(1);
+          var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+          x[0].setAttribute("class", "layui-unselect layui-form-switch layui-form-onswitch");
+          var d = document.getElementsByTagName('em')[0];
+          d.firstChild.nodeValue = '启用';
+          form.render(); //更新全部
+          initTree();
+          break;
+      }
+    });
+
+    //监听指定开关
+    form.on('switch(switch)', function () {
+      $(".operation_user input[name=status]").attr('type', 'hidden').val(this.checked ? 1 : 2);
+    });
+
+    //编辑或新增的界面取消事件
+    $("#btn_cancel").click(function () {
+      //显示表格
+      $(".user_table_div").show();
+      //隐藏编辑窗口
+      $(".operation_user").hide();
+      //可以防止在表单事件操作后自动刷新
+      return false;
+    });
+
+
+    //初始化部门树
+    var initTree = function () {
+      CoreUtil.sendAjax("/api/dept/tree", null, function (res) {
+        loadDeptTree(res.data);
+      }, "GET", false)
+    };
+
+    //加载部门树数据
+    var loadDeptTree = function (data) {
+      //仅节点左侧图标控制收缩
+      tree.render({
+        elem: '#deptTree'
+        , data: data
+        , onlyIconControl: true //是否仅允许节点左侧图标控制展开收缩
+        , click: function (obj) {
+          selectNode = obj;
+          layer.msg(JSON.stringify(selectNode.data.title));
+        }
+      });
+    };
+
+    //打开部门树对话框
+    $(".operation_user input[name=deptName]").click(function () {
+      layer.open({
+        type: 1,
+        offset: '50px',
+        skin: 'layui-layer-molv',
+        title: "选择部门",
+        area: ['400px', '550px'],
+        shade: 0,
+        shadeClose: false,
+        content: $("#deptTree"),
+        btn: ['确定', '取消'],
+        yes: function (index) {
+          if (selectNode.data != null) {
+            //选中回显
+            $(".operation_user input[name=deptId]").val(selectNode.data.id);
+            $(".operation_user input[name=deptName]").val(selectNode.data.title);
+          }
+          layer.close(index);
+        }
+      });
+    });
+
+    //监听提交
+    form.on('submit(submit)', function (data) {
+      //新增
+      if (data.field.id === undefined || data.field.id === null || data.field.id === "") {
+        CoreUtil.sendAjax("/api/user/add", JSON.stringify(data.field), function (res) {
+          //显示表格
+          $(".user_table_div").show();
+          //隐藏编辑窗口
+          $(".operation_user").hide();
+          $(".layui-laypage-btn").click();
+        }, "POST", false);
+      }
+      return false;
+    });
   })
 </script>
 </html>

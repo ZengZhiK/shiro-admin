@@ -1,7 +1,11 @@
 package com.zzk.shiroadmin.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.zzk.shiroadmin.common.exception.BusinessException;
+import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
+import com.zzk.shiroadmin.mapper.SysDeptMapper;
 import com.zzk.shiroadmin.mapper.SysUserMapper;
+import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.resp.HomeRespVO;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
@@ -25,6 +29,9 @@ public class HomeServiceImpl implements HomeService {
     private SysUserMapper sysUserMapper;
 
     @Autowired
+    private SysDeptMapper sysDeptMapper;
+
+    @Autowired
     private PermissionService permissionService;
 
     @Override
@@ -33,14 +40,19 @@ public class HomeServiceImpl implements HomeService {
         List<MenuRespNodeVO> menus = permissionService.selectMenuForHome(userId);
 
         SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
-        UserInfoRespVO userInfo = null;
-        if (sysUser != null) {
-            userInfo = UserInfoRespVO.builder()
-                    .id(sysUser.getId())
-                    .username(sysUser.getUsername())
-                    .deptName("BUCT")
-                    .build();
+        // 用户不存在
+        if (sysUser == null) {
+            throw new BusinessException(BusinessExceptionType.ACCOUNT_NOT_EXIST_ERROR);
         }
+
+        SysDept sysDept = sysDeptMapper.selectByPrimaryKey(sysUser.getDeptId());
+        sysUser.setDeptName(sysDept.getName());
+
+        UserInfoRespVO userInfo = UserInfoRespVO.builder()
+                .id(sysUser.getId())
+                .username(sysUser.getUsername())
+                .deptName(sysUser.getDeptName())
+                .build();
 
         return HomeRespVO.builder()
                 .userInfo(userInfo)

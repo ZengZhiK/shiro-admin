@@ -3,6 +3,7 @@ package com.zzk.shiroadmin.controller.api;
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
@@ -42,5 +43,12 @@ public class UserController {
     @PostMapping
     public PageVO<SysUser> userPageInfo(@RequestBody @Valid UserPageReqVO vo) {
         return userService.pageInfo(vo);
+    }
+
+    @LogPrint(description = "新增用户接口")
+    @ApiOperation(value = "新增用户接口")
+    @PostMapping("/add")
+    public SysUser addUser(@RequestBody @Valid UserAddReqVO vo) {
+        return userService.addUser(vo);
     }
 }

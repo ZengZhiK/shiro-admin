@@ -7,22 +7,23 @@ import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.common.utils.PageUtils;
 import com.zzk.shiroadmin.common.utils.PasswordUtils;
+import com.zzk.shiroadmin.mapper.SysDeptMapper;
 import com.zzk.shiroadmin.mapper.SysUserMapper;
+import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.enums.LoginDevice;
 import com.zzk.shiroadmin.model.enums.UserStatus;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户 业务实现类
@@ -34,6 +35,9 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
     @Autowired
     SysUserMapper sysUserMapper;
+
+    @Autowired
+    SysDeptMapper sysDeptMapper;
 
     @Override
     public LoginRespVO login(LoginReqVO vo) {
@@ -90,8 +94,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageVO<SysUser> pageInfo(UserPageReqVO vo) {
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize());
-        List<SysUser> roleList = sysUserMapper.selectAll(vo);
-        return PageUtils.getPageVO(roleList);
+        List<SysUser> userList = sysUserMapper.selectAll(vo);
+
+        for (SysUser user : userList) {
+            SysDept dept = sysDeptMapper.selectByPrimaryKey(user.getDeptId());
+            if (dept != null) {
+                user.setDeptName(dept.getName());
+            }
+        }
+
+        return PageUtils.getPageVO(userList);
+    }
+
+    @Override
+    public SysUser addUser(UserAddReqVO vo) {
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(vo, sysUser);
+        sysUser.setId(UUID.randomUUID().toString());
+        sysUser.setCreateTime(new Date());
+        String salt = PasswordUtils.getSalt();
+        String ecdPwd = null;
+        try {
+            ecdPwd = PasswordUtils.encode(vo.getPassword(), salt);
+        } catch (Exception e) {
+            throw new BusinessException(BusinessExceptionType.PASSWORD_ENCODE_ERROR);
+        }
+        sysUser.setSalt(salt);
+        sysUser.setPassword(ecdPwd);
+        int i = sysUserMapper.insertSelective(sysUser);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+        return sysUser;
     }
 
     private List<String> getRoleByUserId(String userName) {

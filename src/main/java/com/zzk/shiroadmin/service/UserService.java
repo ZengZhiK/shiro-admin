@@ -2,6 +2,7 @@ package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
@@ -28,4 +29,12 @@ public interface UserService {
      * @return
      */
     PageVO<SysUser> pageInfo(UserPageReqVO vo);
+
+    /**
+     * 增加新用户
+     *
+     * @param vo
+     * @return
+     */
+    SysUser addUser(UserAddReqVO vo);
 }
