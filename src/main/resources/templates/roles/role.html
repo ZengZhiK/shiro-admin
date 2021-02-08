@@ -16,7 +16,7 @@
         <input type="text" id="roleName" class="layui-input" autocomplete="off" placeholder="请输入角色名称">
       </div>
       <div class="layui-input-inline">
-        <input type="text" class="layui-input" id="createTime" placeholder="创建时间">
+        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
       </div>
       <div class="layui-input-inline layui-form">
         <select id="status">
@@ -288,6 +288,7 @@
       elem: '#createTime'
       , type: 'datetime'
       , range: '~'
+      , trigger: 'click'	//日期框只能点击选择，不能手动输入
       , done: function (value, date, endDate) {
         if (value != null && value != undefined && value != "") {
           searchParam.startTime = value.split("~")[0];

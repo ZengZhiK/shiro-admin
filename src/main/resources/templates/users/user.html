@@ -7,6 +7,32 @@
 <body>
 <!-- 用户表格 -->
 <div class="user_table_div">
+  <div id="searchParam">
+    <div class="layui-form-item">
+      <div class="layui-input-inline">
+        <input type="text" id="userId" class="layui-input" autocomplete="off" placeholder="请输入用户ID">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="username" class="layui-input" autocomplete="off" placeholder="请输入账号">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="nickName" class="layui-input" autocomplete="off" placeholder="请输用户昵称">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
+      </div>
+      <div class="layui-input-inline layui-form">
+        <select id="status">
+          <option value="">请选择账号状态</option>
+          <option value="1">正常</option>
+          <option value="2">禁用</option>
+        </select>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn" id="search">查询</button>
+      </div>
+    </div>
+  </div>
   <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
   <div id="laypage" class="layui-laypage-btn"></div>
 </div>
@@ -83,10 +109,18 @@
     var layer = layui.layer;
     var $ = layui.jquery;
     var tree = layui.tree;
+    var laydate = layui.laydate;
 
+    // 查询参数
     var searchParam = {
       pageNum: 1,
-      pageSize: 10
+      pageSize: 10,
+      username: null,
+      userId: null,
+      status: null,
+      startTime: null,
+      endTime: null,
+      nickName: null
     }
 
     /*用来记录部门权限树选中*/
@@ -293,6 +327,41 @@
         }, "POST", false);
       }
       return false;
+    });
+
+    //日期范围
+    laydate.render({
+      elem: '#createTime'
+      , type: 'datetime'
+      , range: '~'
+      , trigger: 'click'	//日期框只能点击选择，不能手动输入
+      , done: function (value, date, endDate) {
+        if (value != null && value != undefined && value != "") {
+          searchParam.startTime = value.split("~")[0];
+          searchParam.endTime = value.split("~")[1];
+        } else {
+          //清空时间的时候要清空以前选择的日期
+          searchParam.startTime = null;
+          searchParam.endTime = null;
+        }
+      }
+    });
+
+    //执行查询
+    $("#search").click(function () {
+      searchParam.userId = $("#userId").val();
+      searchParam.status = $("#status").val();
+      searchParam.username = $("#username").val();
+      searchParam.nickName = $("#nickName").val();
+      searchParam.pageNum = 1;
+      CoreUtil.sendAjax("/api/user", JSON.stringify(searchParam), function (res) {
+        //初始化分页器
+        laypageTable(res.data.totalRows, searchParam.pageNum);
+        //初始化渲染数据
+        if (res.data.list != null) {
+          loadTable(res.data.list);
+        }
+      }, "POST", false);
     });
   })
 </script>
