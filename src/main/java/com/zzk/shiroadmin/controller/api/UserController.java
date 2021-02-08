@@ -1,8 +1,11 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
+import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,5 +35,12 @@ public class UserController {
     @PostMapping("/login")
     public LoginRespVO login(@RequestBody @Valid LoginReqVO vo) {
         return userService.login(vo);
+    }
+
+    @LogPrint(description = "用户数据分页获取接口")
+    @ApiOperation(value = "用户数据分页获取接口")
+    @PostMapping
+    public PageVO<SysUser> userPageInfo(@RequestBody @Valid UserPageReqVO vo) {
+        return userService.pageInfo(vo);
     }
 }

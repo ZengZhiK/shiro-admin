@@ -84,4 +84,12 @@ public class ViewController {
     public String dept() {
         return "depts/dept";
     }
+
+    /**
+     * 跳转至用户管理页面
+     */
+    @GetMapping("/users")
+    public String user() {
+        return "users/user";
+    }
 }

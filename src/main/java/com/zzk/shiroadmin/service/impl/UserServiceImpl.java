@@ -1,16 +1,20 @@
 package com.zzk.shiroadmin.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
+import com.zzk.shiroadmin.common.utils.PageUtils;
 import com.zzk.shiroadmin.common.utils.PasswordUtils;
 import com.zzk.shiroadmin.mapper.SysUserMapper;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.enums.LoginDevice;
 import com.zzk.shiroadmin.model.enums.UserStatus;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
+import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +85,13 @@ public class UserServiceImpl implements UserService {
                 .refreshToken(refreshToken)
                 .userId(sysUser.getId())
                 .build();
+    }
+
+    @Override
+    public PageVO<SysUser> pageInfo(UserPageReqVO vo) {
+        PageHelper.startPage(vo.getPageNum(), vo.getPageSize());
+        List<SysUser> roleList = sysUserMapper.selectAll(vo);
+        return PageUtils.getPageVO(roleList);
     }
 
     private List<String> getRoleByUserId(String userName) {

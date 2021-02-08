@@ -25,7 +25,7 @@
     sex, deleted, create_id, update_id, create_where, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from sys_user
     where id = #{id,jdbcType=VARCHAR}
@@ -236,5 +236,32 @@
     <include refid="Base_Column_List" />
     from sys_user
     where username = #{username} and deleted = 1
+  </select>
+  <!-- 根据条件查询所有的用户数据-->
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="com.zzk.shiroadmin.model.vo.req.UserPageReqVO">
+      select
+      <include refid="Base_Column_List"></include>
+      from sys_user
+      <where>
+        deleted=1
+        <if test="userId !=null and userId != ''">
+          and id=#{userId}
+        </if>
+        <if test="username !=null and username != ''">
+          and username like concat('%',#{username},'%')
+        </if>
+        <if test="nickName !=null and nickName != ''">
+          and nick_name like concat('%',#{nickName},'%')
+        </if>
+        <if test="status !=null and status != '' or status==0">
+          and status =#{status}
+        </if>
+        <if test="startTime !=null and startTime != ''">
+          and create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime !=null and endTime != ''">
+          and create_time &lt;= #{endTime}
+        </if>
+      </where>
   </select>
 </mapper>

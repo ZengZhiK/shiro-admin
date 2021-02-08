@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
+  <title>用户管理-ShiroAdmin</title>
+  <link rel="stylesheet" th:href="@{/css/custom.form.css}">
+</head>
+<body>
+<!-- 用户表格 -->
+<div class="user_table_div">
+  <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
+  <div id="laypage" class="layui-laypage-btn"></div>
+</div>
+</body>
+<script>
+  layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree'], function () {
+    var table = layui.table;
+    var laypage = layui.laypage
+    var form = layui.form;
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var searchParam = {
+      pageNum: 1,
+      pageSize: 10
+    }
+
+    /*动态获取数据*/
+    CoreUtil.sendAjax("/api/user", JSON.stringify(searchParam), function (res) {
+      //初始化分页器
+      laypageTable(res.data.totalRows, searchParam.pageNum);
+      //初始化渲染数据
+      if (res.data.list != null) {
+        loadTable(res.data.list);
+      }
+    }, "POST", false);
+
+    //渲染分页插件
+    var laypageTable = function (count, currentPage) {
+      laypage.render({
+        elem: 'laypage'
+        , count: count
+        , limit: searchParam.pageSize
+        , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+        , curr: location.hash.replace('#!currentPage=', '') //获取起始页
+        , hash: 'currentPage' //自定义hash值
+        , jump: function (obj, first) {
+          if (!first) {
+            searchParam.pageNum = obj.curr;
+            searchParam.pageSize = obj.limit;
+            CoreUtil.sendAjax("/api/user", JSON.stringify(searchParam), function (res) {
+              if (res.data.list != null) {
+                loadTable(res.data.list);
+                laypageTable(res.data.totalRows, searchParam.pageNum);
+              }
+            }, "POST", false);
+          }
+        }
+      });
+    };
+
+    //渲染table
+    var loadTable = function (data) {
+      //展示已知数据
+      table.render({
+        elem: '#user_table'
+        , cols: [
+          [
+            {type: 'checkbox', fixed: 'left'},
+            {field: 'id', title: 'ID', width: 300, sort: true},
+            {field: 'username', title: '账号', width: 130},
+            {field: 'phone', title: '手机号', width: 130},
+            {field: 'deptName', title: '所属公司', width: 120},
+            {field: 'realName', title: '真实名称', width: 120},
+            {field: 'nickName', title: '昵称', width: 130},
+            {field: 'email', title: '邮箱', width: 150},
+            {
+              field: 'sex', title: '性别', width: 100, templet: function (item) {
+                if (item.sex === 1) {
+                  return "男";
+                }
+                if (item.sex === 2) {
+                  return "女";
+                }
+              }
+            },
+            {
+              field: 'createTime', title: '创建时间', minWidth: 120, templet: function (item) {
+                return CoreUtil.formattime(item.createTime);
+              }
+            },
+            {
+              field: 'updateTime', title: '更新时间', minWidth: 120, templet: function (item) {
+                return CoreUtil.formattime(item.updateTime);
+              }
+            },
+            {
+              field: 'status', title: '状态', width: 100, templet: function (item) {
+                if (item.status === 1) {
+                  return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
+                }
+                if (item.status === 2) {
+                  return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
+                }
+              }
+            },
+            {
+              field: 'createWhere', title: '注册涞源', width: 100, templet: function (item) {
+                if (item.createWhere === 1) {
+                  return "Web";
+                }
+                if (item.createWhere === 2) {
+                  return "Android";
+                }
+                if (item.createWhere === 3) {
+                  return "Ios";
+                }
+              }
+            },
+            {width: 300, title: '操作'}
+          ]
+        ]
+        , data: data
+        , even: true
+        , limit: data.length
+        , limits: [10, 20, 30, 40, 50]
+      });
+    };
+  })
+</script>
+</html>
