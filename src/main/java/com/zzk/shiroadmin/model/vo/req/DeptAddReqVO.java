@@ -22,6 +22,7 @@ public class DeptAddReqVO {
     private String pid;
 
     @ApiModelProperty(value = "部门经理名称")
+    @NotBlank(message = "部门经理名称不能为空")
     private String managerName;
 
     @ApiModelProperty(value = "部门经理电话")

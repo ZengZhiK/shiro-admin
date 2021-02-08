@@ -69,7 +69,7 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public SysDept addDept(DeptAddReqVO vo) {
         String relationCode;
-        long deptCount = redisUtils.incrby(RedisConstant.DEPT_CODE_KEY, 1);
+        long deptCount = redisUtils.incrby(RedisConstant.DEPT_COUNT, 1);
         String deptCode = CodeUtils.deptCode(String.valueOf(deptCount), 7, "0");
         SysDept parent = sysDeptMapper.selectByPrimaryKey(vo.getPid());
         if (vo.getPid().equals("0")) {

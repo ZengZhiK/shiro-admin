@@ -8,7 +8,7 @@ package com.zzk.shiroadmin.common.constant;
  */
 public class RedisConstant {
     /**
-     * 部门编码key
+     * 部门计数
      */
-    public static final String DEPT_CODE_KEY = "dept-code-key_";
+    public static final String DEPT_COUNT = "dept-count";
 }
