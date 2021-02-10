@@ -27,7 +27,7 @@ public class ErrorController {
      * 过滤器异常处理
      */
     @LogPrint(description = "过滤器异常处理")
-    @GetMapping("/filter-error")
+    @RequestMapping("/filter-error")
     public AjaxResponse handleFilterError(HttpServletRequest request) {
         Exception exception = (Exception) request.getAttribute("filter.error");
         if (exception instanceof BusinessException) {

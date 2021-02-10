@@ -8,6 +8,16 @@ package com.zzk.shiroadmin.common.constant;
  */
 public class JwtConstants {
     /**
+     * 业务访问token
+     */
+    public static final String ACCESS_TOKEN = "accessToken";
+
+    /**
+     * 业务访问token
+     */
+    public static final String REFRESH_TOKEN = "refreshToken";
+
+    /**
      * 用户名称
      */
     public static final String JWT_USERNAME = "jwt-username";

@@ -1,9 +1,10 @@
 package com.zzk.shiroadmin.shiro;
 
-import com.zzk.shiroadmin.common.constant.ShiroConstants;
+import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.util.StringUtils;
 
@@ -38,7 +39,7 @@ public class CustomAccessControlFilter extends AccessControlFilter {
 
         log.info("Shiro拦截      : {}", request.getRequestURL());
 
-        String accessToken = request.getHeader(ShiroConstants.ACCESS_TOKEN);
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
 
         try {
             if (StringUtils.isEmpty(accessToken)) {
@@ -47,6 +48,12 @@ public class CustomAccessControlFilter extends AccessControlFilter {
             CustomUsernamePasswordToken customToken = new CustomUsernamePasswordToken(accessToken);
             getSubject(servletRequest, servletResponse).login(customToken);
         } catch (Exception e) {
+            // 因为CustomHashedCredentialsMatcher产生的异常会转换为AuthenticationException
+            // 所以需要处理CustomHashedCredentialsMatcher中产生的BusinessException
+            if (e instanceof AuthenticationException && e.getCause() instanceof BusinessException) {
+                e = (BusinessException) e.getCause();
+            }
+
             // 异常捕获，发送到ErrorController的/sys-error/filter-error
             request.setAttribute("filter.error", e);
             request.getRequestDispatcher("/sys-error/filter-error").forward(servletRequest, servletResponse);

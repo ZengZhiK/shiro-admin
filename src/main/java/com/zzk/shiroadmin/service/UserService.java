@@ -54,4 +54,14 @@ public interface UserService {
      * @param vo
      */
     void setUserOwnRole(UserOwnRoleReqVO vo);
+
+    /**
+     * 刷新Token：
+     * 一种是管理员修改了该用户的角色/权限(需要主动去刷新)
+     * 另一种是 jwt 过期要刷新
+     *
+     * @param refreshToken
+     * @return
+     */
+    String refreshToken(String refreshToken);
 }

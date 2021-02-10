@@ -1,7 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
-import com.zzk.shiroadmin.common.constant.ShiroConstants;
+import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.model.vo.resp.HomeRespVO;
 import com.zzk.shiroadmin.service.HomeService;
@@ -31,7 +31,7 @@ public class HomeController {
     @ApiOperation(value = "主页数据获取接口")
     @GetMapping
     public HomeRespVO getHomeInfo(HttpServletRequest request) {
-        String accessToken = request.getHeader(ShiroConstants.ACCESS_TOKEN);
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
         // 通过access_token拿userId
         String userId = JwtTokenUtils.getUserId(accessToken);
 

@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -65,5 +67,14 @@ public class UserController {
     public AjaxResponse saveUserOwnRole(@RequestBody @Valid UserOwnRoleReqVO vo) {
         userService.setUserOwnRole(vo);
         return AjaxResponse.success();
+    }
+
+    @LogPrint(description = "刷新Token接口")
+    @ApiOperation(value = "刷新Token接口")
+    @GetMapping("/token")
+    public AjaxResponse refreshToken(HttpServletRequest request) {
+        String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
+        String newAccessToken = userService.refreshToken(refreshToken);
+        return AjaxResponse.success(newAccessToken);
     }
 }

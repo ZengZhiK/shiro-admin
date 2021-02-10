@@ -158,6 +158,25 @@ public class UserServiceImpl implements UserService {
         redisUtils.set(JwtConstants.JWT_REFRESH_KEY + vo.getUserId(), vo.getUserId(), jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
     }
 
+    @Override
+    public String refreshToken(String refreshToken) {
+        // 它是否过期
+        // TODO:它是否被加如了黑名
+        if (!JwtTokenUtils.validateToken(refreshToken)) {
+            throw new BusinessException(BusinessExceptionType.REFRESH_TOKEN_ERROR);
+        }
+
+        String userId = JwtTokenUtils.getUserId(refreshToken);
+        String username = JwtTokenUtils.getUserName(refreshToken);
+
+        // 生成新的Token
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtConstants.JWT_ROLES_INFO, getRoleByUserId(userId));
+        claims.put(JwtConstants.JWT_PERMISSIONS_INFO, getPermissionByUserId(userId));
+        claims.put(JwtConstants.JWT_USERNAME, username);
+        return JwtTokenUtils.getAccessToken(userId, claims);
+    }
+
     private List<String> getRoleByUserId(String userName) {
         List<String> list = new ArrayList<>();
         if (userName.equals("admin")) {
