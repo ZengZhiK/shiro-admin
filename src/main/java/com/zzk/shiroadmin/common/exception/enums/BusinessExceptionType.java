@@ -14,9 +14,7 @@ import lombok.Getter;
 public enum BusinessExceptionType {
     USER_INPUT_ERROR(4000000, "您输入的数据错误!"),
     ACCOUNT_NOT_EXIST_ERROR(4000001, "账号不存在，请注册！"),
-    ACCOUNT_LOCKED_ERROR(4000002, "账号被锁定，请联系管理员"),
-    ACCOUNT_PASSWORD_ERROR(4000003, "用户名或密码错误！"),
-
+    ACCOUNT_PASSWORD_ERROR(4000002, "用户名或密码错误！"),
 
     DATA_ERROR(4000001, "传入数据异常"),
     PARENT_DEPT_IS_NULL_ERROR(4000002, "父级部门不存在错误！"),
@@ -38,6 +36,7 @@ public enum BusinessExceptionType {
     REFRESH_TOKEN_ERROR(4010003, "RefreshToken过期或在黑名单！"),
     AUTHENTICATION_ERROR(4010004, "Token有误，用户身份认证失败！"),
     AUTHORIZATION_ERROR(4010005, "授权失败，您没有权限访问资源！"),
+    ACCOUNT_LOCKED_ERROR(4010006, "账号被锁定，请联系管理员"),
 
     SYSTEM_ERROR(5000000, "系统出现异常，请您稍后再试或联系管理员！"),
     PASSWORD_ENCODE_ERROR(5000001, "密码加密错误");

@@ -1,10 +1,7 @@
 package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysUser;
-import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserOwnRoleReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
+import com.zzk.shiroadmin.model.vo.req.*;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
@@ -64,4 +61,11 @@ public interface UserService {
      * @return
      */
     String refreshToken(String refreshToken);
+
+    /**
+     * 更新用户数据，并记录谁修改了该用户
+     *
+     * @param vo
+     */
+    void updateUser(UserUpdateReqVO vo, String operationId);
 }

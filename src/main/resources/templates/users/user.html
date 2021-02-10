@@ -5,45 +5,13 @@
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
 </head>
 <body>
-<!-- 用户表格 -->
-<div class="user_table_div">
-  <div id="searchParam">
-    <div class="layui-form-item">
-      <div class="layui-input-inline">
-        <input type="text" id="userId" class="layui-input" autocomplete="off" placeholder="请输入用户ID">
-      </div>
-      <div class="layui-input-inline">
-        <input type="text" id="username" class="layui-input" autocomplete="off" placeholder="请输入账号">
-      </div>
-      <div class="layui-input-inline">
-        <input type="text" id="nickName" class="layui-input" autocomplete="off" placeholder="请输用户昵称">
-      </div>
-      <div class="layui-input-inline">
-        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
-      </div>
-      <div class="layui-input-inline layui-form">
-        <select id="status">
-          <option value="">请选择账号状态</option>
-          <option value="1">正常</option>
-          <option value="2">禁用</option>
-        </select>
-      </div>
-      <div class="layui-inline">
-        <button class="layui-btn" id="search">查询</button>
-      </div>
-    </div>
-  </div>
-  <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
-  <div id="laypage" class="layui-laypage-btn"></div>
-</div>
-<!-- 用户新增表单 -->
+<!-- 用户新增/修改表单 -->
 <div class="panel panel-default operation_user" hidden>
   <div class="panel-heading title"></div>
   <div class="layui-card-body">
     <form class="layui-form " action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px">
       <input name="id" hidden/>
       <input name="deptId" hidden/>
-
       <div class="layui-form-item">
         <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
@@ -75,7 +43,6 @@
           <input type="checkbox" name="status" lay-skin="switch" lay-filter="switch" lay-text="启用|禁用" checked>
         </div>
       </div>
-
       <div class="layui-form-item">
         <div class="layui-input-block">
           <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
@@ -84,6 +51,37 @@
       </div>
     </form>
   </div>
+</div>
+<!-- 用户表格 -->
+<div class="user_table_div">
+  <div id="searchParam">
+    <div class="layui-form-item">
+      <div class="layui-input-inline">
+        <input type="text" id="userId" class="layui-input" autocomplete="off" placeholder="请输入用户ID">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="username" class="layui-input" autocomplete="off" placeholder="请输入账号">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="nickName" class="layui-input" autocomplete="off" placeholder="请输用户昵称">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
+      </div>
+      <div class="layui-input-inline layui-form">
+        <select id="status">
+          <option value="">请选择账号状态</option>
+          <option value="1">正常</option>
+          <option value="2">禁用</option>
+        </select>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn" id="search">查询</button>
+      </div>
+    </div>
+  </div>
+  <table class="layui-hide" id="user_table" lay-filter="user_table"></table>
+  <div id="laypage" class="layui-laypage-btn"></div>
 </div>
 <!-- 部门树 -->
 <div id="deptTree" style="display: none"></div>
@@ -103,19 +101,20 @@
     </button>
   </div>
 </script>
-<!-- 赋予角色操作 -->
+<!-- 赋予角色、编辑用户按钮 -->
 <script type="text/html" id="tool">
   <a class="layui-btn layui-btn-xs" lay-event="operationRole">赋予角色</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree', 'transfer'], function () {
-    var table = layui.table;
-    var laypage = layui.laypage
-    var form = layui.form;
-    var layer = layui.layer;
     var $ = layui.jquery;
-    var tree = layui.tree;
+    var table = layui.table;
+    var laypage = layui.laypage;
     var laydate = layui.laydate;
+    var form = layui.form;
+    var tree = layui.tree;
+    var layer = layui.layer;
     var transfer = layui.transfer;
 
     // 查询参数
@@ -332,6 +331,14 @@
           $(".operation_user").hide();
           $(".layui-laypage-btn").click();
         }, "POST", false);
+      } else {
+        CoreUtil.sendAjax("/api/user/update", JSON.stringify(data.field), function (res) {
+          //显示表格
+          $(".user_table_div").show();
+          //隐藏编辑窗口
+          $(".operation_user").hide();
+          $(".layui-laypage-btn").click();
+        }, "PUT", false);
       }
       return false;
     });
@@ -392,6 +399,7 @@
                 //获得右侧数据
                 var roleIds = [];
                 var getData = transfer.getData('ownData');
+                // layer.msg(JSON.stringify(getData));
                 if (getData.length != 0) {
                   $(getData).each(function (index, item) {
                     roleIds.push(item.value);
@@ -411,10 +419,40 @@
                 layer.close(index);
               }
             });
-          }, "GET", false);
+          }, "GET", false, function (res) {
+            layer.msg("抱歉！您暂无查询用户所拥有角色列表的权限");
+          });
+          break;
+        case 'edit':
+          $(".user_table_div").hide();
+          $(".operation_user").show();
+          $(".title").html("编辑用户");
+          $(".operation_user input[name=id]").val(data.id);
+          $(".operation_user input[name=deptId]").val(data.deptId);
+          $(".operation_user input[name=username]").val(data.username);
+          $(".operation_user input[name=password]").val("");
+          $(".operation_user input[name=phone]").val(data.phone);
+          $(".operation_user input[name=deptName]").val(data.deptName);
+          if (data.status == 1) {
+            $(".operation_user input[name=status]").attr('checked', 'checked');
+            $(".operation_user input[name=status]").attr('type', 'hidden').val(1);
+            var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+            x[0].setAttribute("class", "layui-unselect layui-form-switch layui-form-onswitch");
+            var d = document.getElementsByTagName('em')[0];
+            d.firstChild.nodeValue = '启用';
+          } else {
+            $(".operation_user input[name=status]").attr('type', 'hidden').removeAttr("checked").val(2);
+            var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+            x[0].setAttribute("class", "layui-unselect layui-form-switch");
+            var d = document.getElementsByTagName('em')[0];
+            d.firstChild.nodeValue = '禁用';
+          }
+          form.render(); //更新全部
+          initTree();
           break;
       }
     });
+
 
     //初始化 赋予角色控件
     var initTransfer = function (data) {

@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.shiro;
 
 import com.zzk.shiroadmin.common.constant.JwtConstants;
+import com.zzk.shiroadmin.common.constant.RedisConstant;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
@@ -27,6 +28,11 @@ public class CustomHashedCredentialsMatcher extends HashedCredentialsMatcher {
         CustomUsernamePasswordToken customToken = (CustomUsernamePasswordToken) token;
         String accessToken = (String) customToken.getCredentials();
         String userId = JwtTokenUtils.getUserId(accessToken);
+
+        //判断是否被锁定
+        if (redisUtils.hasKey(RedisConstant.ACCOUNT_LOCK_KEY + userId)) {
+            throw new BusinessException(BusinessExceptionType.ACCOUNT_LOCKED_ERROR);
+        }
 
         // 校验token
         if (!JwtTokenUtils.validateToken(accessToken)) {

@@ -3,11 +3,9 @@ package com.zzk.shiroadmin.controller.api;
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
+import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.model.entity.SysUser;
-import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserOwnRoleReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
+import com.zzk.shiroadmin.model.vo.req.*;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
@@ -76,5 +74,17 @@ public class UserController {
         String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
         String newAccessToken = userService.refreshToken(refreshToken);
         return AjaxResponse.success(newAccessToken);
+    }
+
+    @LogPrint(description = "修改用户信息接口")
+    @ApiOperation(value = "修改用户信息接口")
+    @PutMapping("/update")
+    public AjaxResponse updateUser(@RequestBody @Valid UserUpdateReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String operationId = JwtTokenUtils.getUserId(accessToken);
+
+        userService.updateUser(vo, operationId);
+
+        return AjaxResponse.success();
     }
 }

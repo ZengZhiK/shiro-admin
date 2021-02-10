@@ -2,6 +2,7 @@ package com.zzk.shiroadmin.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
+import com.zzk.shiroadmin.common.constant.RedisConstant;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.*;
@@ -11,10 +12,7 @@ import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.enums.LoginDevice;
 import com.zzk.shiroadmin.model.enums.UserStatus;
-import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserOwnRoleReqVO;
-import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
+import com.zzk.shiroadmin.model.vo.req.*;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
@@ -24,6 +22,7 @@ import com.zzk.shiroadmin.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -154,7 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setUserOwnRole(UserOwnRoleReqVO vo) {
         userRoleService.addUserRole(vo);
-        // 标记用户要主动去刷新
+        // 修改用户角色后，需要在Redis标记被修改用户，被修改用户要主动去刷新
         redisUtils.set(JwtConstants.JWT_REFRESH_KEY + vo.getUserId(), vo.getUserId(), jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
     }
 
@@ -175,6 +174,41 @@ public class UserServiceImpl implements UserService {
         claims.put(JwtConstants.JWT_PERMISSIONS_INFO, getPermissionByUserId(userId));
         claims.put(JwtConstants.JWT_USERNAME, username);
         return JwtTokenUtils.getAccessToken(userId, claims);
+    }
+
+    @Override
+    public void updateUser(UserUpdateReqVO vo, String operationId) {
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(vo, sysUser);
+        sysUser.setUpdateTime(new Date());
+        sysUser.setUpdateId(operationId);
+
+        // 对密码进行处理
+        if (StringUtils.isEmpty(vo.getPassword())) {
+            sysUser.setPassword(null);
+        } else {
+            String salt = PasswordUtils.getSalt();
+            String endPwd = null;
+            try {
+                endPwd = PasswordUtils.encode(vo.getPassword(), salt);
+            } catch (Exception e) {
+                throw new BusinessException(BusinessExceptionType.PASSWORD_ENCODE_ERROR);
+            }
+            sysUser.setSalt(salt);
+            sysUser.setPassword(endPwd);
+        }
+
+        int i = sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        // 禁用用户，需要在Redis标记用户被锁定
+        if (vo.getStatus() == 2) {
+            redisUtils.set(RedisConstant.ACCOUNT_LOCK_KEY + vo.getId(), vo.getId());
+        } else {
+            redisUtils.delete(RedisConstant.ACCOUNT_LOCK_KEY + vo.getId());
+        }
     }
 
     private List<String> getRoleByUserId(String userName) {
