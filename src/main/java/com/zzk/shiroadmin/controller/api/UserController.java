@@ -1,20 +1,20 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserOwnRoleReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
+import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
 import com.zzk.shiroadmin.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -50,5 +50,20 @@ public class UserController {
     @PostMapping("/add")
     public SysUser addUser(@RequestBody @Valid UserAddReqVO vo) {
         return userService.addUser(vo);
+    }
+
+    @LogPrint(description = "查询用户角色接口")
+    @ApiOperation(value = "查询用户角色接口")
+    @GetMapping("/roles/{userId}")
+    public UserRoleRespVO getUserOwnRole(@PathVariable("userId") String userId) {
+        return userService.getUserOwnRole(userId);
+    }
+
+    @LogPrint(description = "保存用户角色接口")
+    @ApiOperation(value = "保存用户角色接口")
+    @PutMapping("/roles")
+    public AjaxResponse saveUserOwnRole(@RequestBody @Valid UserOwnRoleReqVO vo) {
+        userService.setUserOwnRole(vo);
+        return AjaxResponse.success();
     }
 }

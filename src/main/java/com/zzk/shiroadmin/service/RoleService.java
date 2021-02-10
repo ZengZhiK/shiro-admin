@@ -5,6 +5,8 @@ import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 
+import java.util.List;
+
 /**
  * 角色 业务接口
  *
@@ -27,4 +29,11 @@ public interface RoleService {
      * @return
      */
     SysRole addRole(RoleAddReqVO vo);
+
+    /**
+     * 查询所有角色
+     *
+     * @return
+     */
+    List<SysRole> selectAll();
 }

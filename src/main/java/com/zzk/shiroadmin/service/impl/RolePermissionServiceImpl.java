@@ -8,6 +8,7 @@ import com.zzk.shiroadmin.model.relation.RolePermissionRelation;
 import com.zzk.shiroadmin.service.RolePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     private SysRolePermissionMapper sysRolePermissionMapper;
 
     @Override
+    @Transactional
     public void addRolePermission(RolePermissionRelation vo) {
         if (vo.getPermissionIds() == null || vo.getPermissionIds().isEmpty()) {
             return;

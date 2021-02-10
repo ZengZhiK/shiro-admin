@@ -4,9 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
-import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
-import com.zzk.shiroadmin.common.utils.PageUtils;
-import com.zzk.shiroadmin.common.utils.PasswordUtils;
+import com.zzk.shiroadmin.common.utils.*;
 import com.zzk.shiroadmin.mapper.SysDeptMapper;
 import com.zzk.shiroadmin.mapper.SysUserMapper;
 import com.zzk.shiroadmin.model.entity.SysDept;
@@ -15,15 +13,20 @@ import com.zzk.shiroadmin.model.enums.LoginDevice;
 import com.zzk.shiroadmin.model.enums.UserStatus;
 import com.zzk.shiroadmin.model.vo.req.LoginReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.UserOwnRoleReqVO;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
+import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
+import com.zzk.shiroadmin.service.RoleService;
+import com.zzk.shiroadmin.service.UserRoleService;
 import com.zzk.shiroadmin.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户 业务实现类
@@ -34,10 +37,22 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    SysUserMapper sysUserMapper;
+    private SysUserMapper sysUserMapper;
 
     @Autowired
-    SysDeptMapper sysDeptMapper;
+    private SysDeptMapper sysDeptMapper;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Autowired
+    private JwtTokenConfig jwtTokenConfig;
 
     @Override
     public LoginRespVO login(LoginReqVO vo) {
@@ -126,6 +141,21 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
         return sysUser;
+    }
+
+    @Override
+    public UserRoleRespVO getUserOwnRole(String userId) {
+        UserRoleRespVO userRoleRespVO = new UserRoleRespVO();
+        userRoleRespVO.setOwnRoles(userRoleService.getRoleIdsByUserId(userId));
+        userRoleRespVO.setAllRole(roleService.selectAll());
+        return userRoleRespVO;
+    }
+
+    @Override
+    public void setUserOwnRole(UserOwnRoleReqVO vo) {
+        userRoleService.addUserRole(vo);
+        // 标记用户要主动去刷新
+        redisUtils.set(JwtConstants.JWT_REFRESH_KEY + vo.getUserId(), vo.getUserId(), jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
     }
 
     private List<String> getRoleByUserId(String userName) {

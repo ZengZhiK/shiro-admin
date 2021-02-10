@@ -2,6 +2,8 @@ package com.zzk.shiroadmin.mapper;
 
 import com.zzk.shiroadmin.model.entity.SysUserRole;
 
+import java.util.List;
+
 public interface SysUserRoleMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,10 @@ public interface SysUserRoleMapper {
     int updateByPrimaryKeySelective(SysUserRole record);
 
     int updateByPrimaryKey(SysUserRole record);
+
+    List<String> getRoleIdsByUserId(String userId);
+
+    int removeByUserId(String userId);
+
+    int batchInsertUserRole(List<SysUserRole> userRoleList);
 }
