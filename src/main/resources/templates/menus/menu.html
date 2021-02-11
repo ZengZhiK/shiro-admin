@@ -5,10 +5,6 @@
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
 </head>
 <body>
-<!-- 菜单表格：按树形结构显示 -->
-<div class="menu-table">
-  <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
-</div>
 <!-- 菜单新增表单：可新增目录、菜单、按钮 -->
 <div class="panel panel-default operation_menu" hidden>
   <div class="panel-heading title"></div>
@@ -86,6 +82,10 @@
     </form>
   </div>
 </div>
+<!-- 菜单表格：按树形结构显示 -->
+<div class="menu-table">
+  <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
+</div>
 <!-- 菜单树：目录 > 菜单 -->
 <div id="menuTree" style="display: none"></div>
 </body>
@@ -96,6 +96,10 @@
       <i class="layui-icon">&#xe608;</i> 添加
     </button>
   </div>
+</script>
+<!-- 编辑权限、删除权限按钮 -->
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
 </script>
 <script>
   layui.config({
@@ -184,7 +188,7 @@
                 }
               }
             },
-            {title: '操作', width: 180}
+            {title: '操作', width: 180, toolbar: '#tool'}
           ]
         ]
       });
@@ -271,6 +275,16 @@
       }
     });
 
+    //编辑或新增的界面取消事件
+    $("#btn_cancel").click(function () {
+      //显示表格
+      $(".menu-table").show();
+      //隐藏编辑窗口
+      $(".operation_menu").hide();
+      //可以防止在表单事件操作后自动刷新
+      return false;
+    });
+
     //打开部门树对话框
     $(".operation_menu input[name=pidName]").click(function () {
       layer.open({
@@ -311,7 +325,58 @@
           $(".operation_menu").hide();
         }, "POST", false);
       }
+      else {
+        CoreUtil.sendAjax("/api/permission/update",JSON.stringify(data.field),function (res) {
+          reloadTreeTable();
+          //显示表格
+          $(".menu-table").show();
+          //隐藏编辑窗口
+          $(".operation_menu").hide();
+        },"PUT",false);
+      }
+
       return false;
+    });
+
+    //操作项事件
+    table.on('tool(menuTable)', function (obj) {
+      var data = obj.data;
+      switch (obj.event) {
+        case 'edit':
+          selectNode = null;
+          //隐藏表格
+          $(".menu-table").hide();
+          //显示编辑窗口
+          $(".operation_menu").show();
+          $(".title").html("编辑菜单权限");
+          initRadio(data.type);
+          $(".operation_menu input[name=id]").val(data.id);
+          $(".operation_menu input[name=pid]").val(data.pid);
+          $(".operation_menu input[name=name]").val(data.name);
+          $(".operation_menu input[name=pidName]").val(data.pidName);
+          $(".operation_menu input[name=url]").val(data.url);
+          $(".operation_menu input[name=perms]").val(data.perms);
+          $(".operation_menu input[name=orderNum]").val(data.orderNum);
+          $(".operation_menu input[name=method]").val(data.method);
+          $(".operation_menu input[name=code]").val(data.code);
+          if (data.status == 1) {
+            $(".operation_menu input[name=status]").attr('checked', 'checked');
+            $(".operation_menu input[name=status]").attr('type', 'hidden').val(1);
+            var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+            x[0].setAttribute("class", "layui-unselect layui-form-switch layui-form-onswitch");
+            var d = document.getElementsByTagName('em')[0];
+            d.firstChild.nodeValue = '启用';
+          } else {
+            $(".operation_menu input[name=status]").attr('type', 'hidden').removeAttr("checked").val(0);
+            var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+            x[0].setAttribute("class", "layui-unselect layui-form-switch");
+            var d = document.getElementsByTagName('em')[0];
+            d.firstChild.nodeValue = '禁用';
+          }
+          form.render(); //更新全部
+          initTree();
+          break;
+      }
     });
   });
 </script>

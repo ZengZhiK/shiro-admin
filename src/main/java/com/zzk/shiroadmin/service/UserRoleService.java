@@ -23,4 +23,12 @@ public interface UserRoleService {
      * @param vo
      */
     void addUserRole(UserOwnRoleReqVO vo);
+
+    /**
+     * 通过角色id查询关联的用户id
+     *
+     * @param roleIds
+     * @return
+     */
+    List<String> getUserIdsByRoleIds(List<String> roleIds);
 }

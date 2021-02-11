@@ -109,4 +109,13 @@
       )
     </foreach>
   </insert>
+  <!-- 通过角色id集合查找用户id集合 -->
+  <select id="getUserIdsByRoleIds" resultType="java.lang.String">
+    select user_id
+    from sys_user_role
+    where role_id in
+    <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </select>
 </mapper>

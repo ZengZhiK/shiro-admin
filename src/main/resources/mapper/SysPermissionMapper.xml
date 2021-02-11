@@ -192,5 +192,12 @@
         from sys_permission
         where deleted = 1
     </select>
-
+    <!-- 查询该权限的子集权限 -->
+    <!-- 小霍 -->
+    <select id="selectChild" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from sys_permission
+        where pid = #{parentId} and deleted=1
+    </select>
 </mapper>

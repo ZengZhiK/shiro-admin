@@ -1,12 +1,18 @@
 package com.zzk.shiroadmin.service.impl;
 
+import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
+import com.zzk.shiroadmin.common.utils.JwtTokenConfig;
+import com.zzk.shiroadmin.common.utils.RedisUtils;
 import com.zzk.shiroadmin.mapper.SysPermissionMapper;
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.vo.req.PermissionAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.PermissionUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 import com.zzk.shiroadmin.service.PermissionService;
+import com.zzk.shiroadmin.service.RolePermissionService;
+import com.zzk.shiroadmin.service.UserRoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 权限 业务实现类
@@ -27,6 +34,18 @@ import java.util.UUID;
 public class PermissionServiceImpl implements PermissionService {
     @Autowired
     private SysPermissionMapper sysPermissionMapper;
+
+    @Autowired
+    private RolePermissionService rolePermissionService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Autowired
+    private JwtTokenConfig jwtTokenConfig;
 
     @Override
     public List<SysPermission> selectAll() {
@@ -66,6 +85,45 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<MenuRespNodeVO> selectAllTree() {
         return getTree(sysPermissionMapper.selectAll(), true);
+    }
+
+    @Override
+    public void updatePermission(PermissionUpdateReqVO vo) {
+        // 校验数据
+        SysPermission update = new SysPermission();
+        BeanUtils.copyProperties(vo, update);
+        verifyForm(update);
+
+        SysPermission sysPermission = sysPermissionMapper.selectByPrimaryKey(vo.getId());
+        if (sysPermission == null) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+        if (!sysPermission.getPid().equals(vo.getPid()) || sysPermission.getStatus() != vo.getStatus()) {
+            // 所属菜单发生了变化或者权限状态发生了变化要校验该权限是否存在子集
+            List<SysPermission> sysPermissions = sysPermissionMapper.selectChild(vo.getId());
+            if (!sysPermissions.isEmpty()) {
+                throw new BusinessException(BusinessExceptionType.OPERATION_MENU_PERMISSION_UPDATE);
+            }
+        }
+
+        update.setUpdateTime(new Date());
+        int i = sysPermissionMapper.updateByPrimaryKeySelective(update);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        // 判断授权标识符是否发生了变化(权限标识符发生了变化，或者权限状态发生了变化)
+        if (!sysPermission.getPerms().equals(vo.getPerms()) || !sysPermission.getStatus().equals(vo.getStatus())) {
+            List<String> roleIdsByPermissionId = rolePermissionService.getRoleIdsByPermissionId(vo.getId());
+            if (!roleIdsByPermissionId.isEmpty()) {
+                List<String> userIdsByRoleIds = userRoleService.getUserIdsByRoleIds(roleIdsByPermissionId);
+                if (!userIdsByRoleIds.isEmpty()) {
+                    for (String userId : userIdsByRoleIds) {
+                        redisUtils.set(JwtConstants.JWT_REFRESH_KEY + userId, userId, jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
+                    }
+                }
+            }
+        }
     }
 
     /**

@@ -53,4 +53,9 @@ public class UserRoleServiceImpl implements UserRoleService {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
     }
+
+    @Override
+    public List<String> getUserIdsByRoleIds(List<String> roleIds) {
+        return sysUserRoleMapper.getUserIdsByRoleIds(roleIds);
+    }
 }

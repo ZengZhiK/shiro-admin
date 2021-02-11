@@ -49,4 +49,9 @@ public class RolePermissionServiceImpl implements RolePermissionService {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
     }
+
+    @Override
+    public List<String> getRoleIdsByPermissionId(String permissionId) {
+        return sysRolePermissionMapper.getRoleIdsByPermissionId(permissionId);
+    }
 }

@@ -2,6 +2,7 @@ package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.vo.req.PermissionAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.PermissionUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 
 import java.util.List;
@@ -49,4 +50,11 @@ public interface PermissionService {
      * @return
      */
     List<MenuRespNodeVO> selectAllTree();
+
+    /**
+     * 更新权限数据
+     *
+     * @param vo
+     */
+    void updatePermission(PermissionUpdateReqVO vo);
 }

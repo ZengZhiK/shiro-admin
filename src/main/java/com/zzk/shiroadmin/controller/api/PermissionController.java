@@ -1,8 +1,10 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.vo.req.PermissionAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.PermissionUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 import com.zzk.shiroadmin.service.PermissionService;
 import io.swagger.annotations.Api;
@@ -52,5 +54,13 @@ public class PermissionController {
     @PostMapping("/add")
     public SysPermission addPermission(@RequestBody @Valid PermissionAddReqVO vo) {
         return permissionService.addPermission(vo);
+    }
+
+    @LogPrint(description = "修改菜单权限接口")
+    @ApiOperation(value = "修改菜单权限接口")
+    @PutMapping("/update")
+    public AjaxResponse updatePermission(@RequestBody @Valid PermissionUpdateReqVO vo) {
+        permissionService.updatePermission(vo);
+        return AjaxResponse.success();
     }
 }

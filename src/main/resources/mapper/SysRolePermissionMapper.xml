@@ -103,4 +103,10 @@
     from sys_role_permission
     where role_id=#{roleId}
   </delete>
+  <!-- 通过权限查找关联的角色id集合 -->
+  <select id="getRoleIdsByPermissionId" resultType="java.lang.String">
+    select role_id
+    from sys_role_permission
+    where permission_id=#{permissionId}
+  </select>
 </mapper>
