@@ -37,6 +37,7 @@ public enum BusinessExceptionType {
     AUTHENTICATION_ERROR(4010004, "Token有误，用户身份认证失败！"),
     AUTHORIZATION_ERROR(4010005, "授权失败，您没有权限访问资源！"),
     ACCOUNT_LOCKED_ERROR(4010006, "账号被锁定，请联系管理员"),
+    ACCOUNT_HAS_DELETED_ERROR(4010007, "该账号已被删除，请联系系统管理员"),
 
     SYSTEM_ERROR(5000000, "系统出现异常，请您稍后再试或联系管理员！"),
     PASSWORD_ENCODE_ERROR(5000001, "密码加密错误");

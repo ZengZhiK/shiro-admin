@@ -29,6 +29,11 @@ public class CustomHashedCredentialsMatcher extends HashedCredentialsMatcher {
         String accessToken = (String) customToken.getCredentials();
         String userId = JwtTokenUtils.getUserId(accessToken);
 
+        //判断用户是否被删除
+        if(redisUtils.hasKey(RedisConstant.DELETED_USER_KEY+userId)){
+            throw new BusinessException(BusinessExceptionType.ACCOUNT_HAS_DELETED_ERROR);
+        }
+
         //判断是否被锁定
         if (redisUtils.hasKey(RedisConstant.ACCOUNT_LOCK_KEY + userId)) {
             throw new BusinessException(BusinessExceptionType.ACCOUNT_LOCKED_ERROR);

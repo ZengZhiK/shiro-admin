@@ -96,15 +96,16 @@
     </button>
   </div>
   <div class="layui-btn-group">
-    <button type="button" class="layui-btn" lay-event="batchDeleted">
+    <button type="button" class="layui-btn layui-btn-danger" lay-event="batchDeleted">
       <i class="layui-icon">&#xe608;</i> 批量删除
     </button>
   </div>
 </script>
-<!-- 赋予角色、编辑用户按钮 -->
+<!-- 赋予角色、编辑用户、删除用户按钮 -->
 <script type="text/html" id="tool">
   <a class="layui-btn layui-btn-xs" lay-event="operationRole">赋予角色</a>
   <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree', 'transfer'], function () {
@@ -256,6 +257,19 @@
           d.firstChild.nodeValue = '启用';
           form.render(); //更新全部
           initTree();
+          break;
+        case 'batchDeleted':
+          var checkStatus = table.checkStatus(obj.config.id);
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.msg("请选择要批量删除的用户");
+          } else {
+            var userIds = [];
+            $(data).each(function (index, item) {
+              userIds.push(item.id);
+            });
+            tipDialog(userIds, "选中的");
+          }
           break;
       }
     });
@@ -450,9 +464,13 @@
           form.render(); //更新全部
           initTree();
           break;
+        case 'del':
+          var userIds = [];
+          userIds.push(data.id);
+          tipDialog(userIds, data.username);
+          break;
       }
     });
-
 
     //初始化 赋予角色控件
     var initTransfer = function (data) {
@@ -471,6 +489,20 @@
           }
         }
       })
+    };
+
+    //删除前确认对话框
+    var tipDialog = function (userIds, username) {
+      layer.open({
+        content: '确定要删除' + username + "用户么?",
+        yes: function (index, layero) {
+          layer.close(index); //如果设定了yes回调，需进行手工关闭
+          CoreUtil.sendAjax("/api/user/delete", JSON.stringify(userIds), function (res) {
+            layer.msg(res.msg);
+            $(".layui-laypage-btn").click();
+          }, "DELETE", false);
+        }
+      });
     };
   })
 </script>

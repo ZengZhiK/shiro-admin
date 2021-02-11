@@ -16,4 +16,9 @@ public class RedisConstant {
      * 标记用户是否已经被锁定
      */
     public static final String ACCOUNT_LOCK_KEY = "account-lock-key_";
+
+    /**
+     * 标记用户是否已经删除
+     */
+    public static final String DELETED_USER_KEY = "deleted-user-key_";
 }

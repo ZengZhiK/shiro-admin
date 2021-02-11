@@ -264,4 +264,16 @@
         </if>
       </where>
   </select>
+  <!-- 批量/删除用户 -->
+  <update id="deleteUsers">
+    update sys_user
+    set
+      deleted = 0,
+      update_id = #{operationId},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id in
+    <foreach collection="userIds" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </update>
 </mapper>

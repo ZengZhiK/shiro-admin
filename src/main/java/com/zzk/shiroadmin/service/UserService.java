@@ -6,6 +6,8 @@ import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
 
+import java.util.List;
+
 /**
  * 用户 业务接口
  *
@@ -68,4 +70,12 @@ public interface UserService {
      * @param vo
      */
     void updateUser(UserUpdateReqVO vo, String operationId);
+
+    /**
+     * 批量删除用户
+     *
+     * @param userIds
+     * @param operationId
+     */
+    void deleteUsers(List<String> userIds, String operationId);
 }

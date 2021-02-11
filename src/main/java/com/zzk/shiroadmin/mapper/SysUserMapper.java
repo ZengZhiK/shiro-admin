@@ -2,7 +2,9 @@ package com.zzk.shiroadmin.mapper;
 
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.UserPageReqVO;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SysUserMapper {
@@ -21,4 +23,6 @@ public interface SysUserMapper {
     SysUser selectByUsername(String username);
 
     List<SysUser> selectAll(UserPageReqVO vo);
+
+    int deleteUsers(@Param("userIds") List<String> userIds, @Param("operationId") String operationId, @Param("updateTime") Date updateTime);
 }

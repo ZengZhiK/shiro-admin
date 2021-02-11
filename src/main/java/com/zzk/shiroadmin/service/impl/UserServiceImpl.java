@@ -211,6 +211,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void deleteUsers(List<String> userIds, String operationId) {
+        int i = sysUserMapper.deleteUsers(userIds, operationId, new Date());
+        if (i == 0) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+        for (String userId : userIds) {
+            redisUtils.set(RedisConstant.DELETED_USER_KEY + userId, userId, jwtTokenConfig.getRefreshTokenExpireAppTime().toMillis(), TimeUnit.MILLISECONDS);
+        }
+    }
+
     private List<String> getRoleByUserId(String userName) {
         List<String> list = new ArrayList<>();
         if (userName.equals("admin")) {

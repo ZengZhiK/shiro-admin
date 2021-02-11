@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 用户 前端控制器
@@ -84,6 +85,18 @@ public class UserController {
         String operationId = JwtTokenUtils.getUserId(accessToken);
 
         userService.updateUser(vo, operationId);
+
+        return AjaxResponse.success();
+    }
+
+    @LogPrint(description = "批量删除用户信息接口")
+    @ApiOperation(value = "批量删除用户信息接口")
+    @DeleteMapping("/delete")
+    public AjaxResponse deleteUser(@RequestBody List<String> userIds, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String operationId = JwtTokenUtils.getUserId(accessToken);
+
+        userService.deleteUsers(userIds, operationId);
 
         return AjaxResponse.success();
     }
