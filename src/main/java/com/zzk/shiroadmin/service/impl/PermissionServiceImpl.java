@@ -16,6 +16,7 @@ import com.zzk.shiroadmin.service.UserRoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -116,11 +117,44 @@ public class PermissionServiceImpl implements PermissionService {
         if (!sysPermission.getPerms().equals(vo.getPerms()) || !sysPermission.getStatus().equals(vo.getStatus())) {
             List<String> roleIdsByPermissionId = rolePermissionService.getRoleIdsByPermissionId(vo.getId());
             if (!roleIdsByPermissionId.isEmpty()) {
-                List<String> userIdsByRoleIds = userRoleService.getUserIdsByRoleIds(roleIdsByPermissionId);
-                if (!userIdsByRoleIds.isEmpty()) {
-                    for (String userId : userIdsByRoleIds) {
+                List<String> userIds = userRoleService.getUserIdsByRoleIds(roleIdsByPermissionId);
+                if (!userIds.isEmpty()) {
+                    for (String userId : userIds) {
                         redisUtils.set(JwtConstants.JWT_REFRESH_KEY + userId, userId, jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
                     }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deletedPermission(String id) {
+        //判断是否有子集关联
+        List<SysPermission> sysPermissions = sysPermissionMapper.selectChild(id);
+        if (!sysPermissions.isEmpty()) {
+            throw new BusinessException(BusinessExceptionType.ROLE_PERMISSION_RELATION);
+        }
+
+        //更新权限数据
+        SysPermission sysPermission = new SysPermission();
+        sysPermission.setUpdateTime(new Date());
+        sysPermission.setDeleted(0);
+        sysPermission.setId(id);
+        int i = sysPermissionMapper.updateByPrimaryKeySelective(sysPermission);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        //判断授权标识符是否发生了变化
+        List<String> roleIdsByPermissionId = rolePermissionService.getRoleIdsByPermissionId(id);
+        //解除相关角色和该菜单权限的关联
+        rolePermissionService.removeRolesByPermissionId(id);
+        if (!roleIdsByPermissionId.isEmpty()) {
+            List<String> userIds = userRoleService.getUserIdsByRoleIds(roleIdsByPermissionId);
+            if (!userIds.isEmpty()) {
+                for (String userId : userIds) {
+                    redisUtils.set(JwtConstants.JWT_REFRESH_KEY + userId, userId, jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
                 }
             }
         }

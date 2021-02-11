@@ -63,4 +63,12 @@ public class PermissionController {
         permissionService.updatePermission(vo);
         return AjaxResponse.success();
     }
+
+    @LogPrint(description = "删除菜单权限接口")
+    @ApiOperation(value = "删除菜单权限接口")
+    @DeleteMapping("/delete/{permissionId}")
+    public AjaxResponse deletePermission(@PathVariable("permissionId") String permissionId) {
+        permissionService.deletedPermission(permissionId);
+        return AjaxResponse.success();
+    }
 }

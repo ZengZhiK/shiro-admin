@@ -101,12 +101,18 @@
   <delete id="removeByRoleId">
     delete
     from sys_role_permission
-    where role_id=#{roleId}
+    where role_id = #{roleId}
   </delete>
   <!-- 通过权限查找关联的角色id集合 -->
   <select id="getRoleIdsByPermissionId" resultType="java.lang.String">
     select role_id
     from sys_role_permission
-    where permission_id=#{permissionId}
+    where permission_id = #{permissionId}
   </select>
+  <!-- 通过权限id删除关联的角色 -->
+  <delete id="removeRolesByPermissionId">
+    delete
+    from sys_role_permission
+    where permission_id = #{permissionId}
+  </delete>
 </mapper>

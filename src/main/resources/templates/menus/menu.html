@@ -100,6 +100,7 @@
 <!-- 编辑权限、删除权限按钮 -->
 <script type="text/html" id="tool">
   <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
   layui.config({
@@ -324,15 +325,14 @@
           //显示编辑窗口
           $(".operation_menu").hide();
         }, "POST", false);
-      }
-      else {
-        CoreUtil.sendAjax("/api/permission/update",JSON.stringify(data.field),function (res) {
+      } else {
+        CoreUtil.sendAjax("/api/permission/update", JSON.stringify(data.field), function (res) {
           reloadTreeTable();
           //显示表格
           $(".menu-table").show();
           //隐藏编辑窗口
           $(".operation_menu").hide();
-        },"PUT",false);
+        }, "PUT", false);
       }
 
       return false;
@@ -376,8 +376,25 @@
           form.render(); //更新全部
           initTree();
           break;
+        case 'del':
+          deletedMenu(data.id, data.name);
+          break;
       }
     });
+
+    //删除操作
+    var deletedMenu = function (menuId, menuName) {
+      layer.open({
+        content: '确定要删除' + menuName + "?",
+        yes: function (index, layero) {
+          layer.close(index); //如果设定了yes回调，需进行手工关闭
+          CoreUtil.sendAjax("/api/permission/delete/" + menuId, null, function (res) {
+            layer.msg(res.msg);
+            reloadTreeTable();
+          }, "DELETE", false);
+        }
+      });
+    };
   });
 </script>
 </html>

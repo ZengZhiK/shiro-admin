@@ -57,4 +57,11 @@ public interface PermissionService {
      * @param vo
      */
     void updatePermission(PermissionUpdateReqVO vo);
+
+    /**
+     * 根据id删除权限
+     *
+     * @param id
+     */
+    void deletedPermission(String id);
 }
