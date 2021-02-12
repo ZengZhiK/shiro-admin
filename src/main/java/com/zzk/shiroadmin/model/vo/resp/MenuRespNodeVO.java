@@ -27,4 +27,7 @@ public class MenuRespNodeVO {
 
     @ApiModelProperty(value = "默认展开")
     private boolean spread = true;
+
+    @ApiModelProperty(value = "节点是否选中")
+    private boolean checked;
 }

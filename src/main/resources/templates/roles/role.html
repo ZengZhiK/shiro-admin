@@ -5,35 +5,6 @@
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
 </head>
 <body>
-<!-- 角色表格 -->
-<div class="role_table_div">
-  <div id="searchParam">
-    <div class="layui-form-item">
-      <div class="layui-input-inline">
-        <input type="text" id="roleId" class="layui-input" autocomplete="off" placeholder="请输入角色ID">
-      </div>
-      <div class="layui-input-inline">
-        <input type="text" id="roleName" class="layui-input" autocomplete="off" placeholder="请输入角色名称">
-      </div>
-      <div class="layui-input-inline">
-        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
-      </div>
-      <div class="layui-input-inline layui-form">
-        <select id="status">
-          <option value="">请选择角色状态</option>
-          <option value="1">正常</option>
-          <option value="0">弃用</option>
-        </select>
-      </div>
-      <div class="layui-inline">
-        <button class="layui-btn" id="search">查询</button>
-      </div>
-    </div>
-
-  </div>
-  <table class="layui-hide" id="role_table" lay-filter="role_table"></table>
-  <div id="laypage" class="layui-laypage-btn"></div>
-</div>
 <!-- 角色新增表单 -->
 <div class="panel panel-default operation_role" hidden>
   <div class="panel-heading title"></div>
@@ -76,6 +47,35 @@
     </form>
   </div>
 </div>
+<!-- 角色表格 -->
+<div class="role_table_div">
+  <div id="searchParam">
+    <div class="layui-form-item">
+      <div class="layui-input-inline">
+        <input type="text" id="roleId" class="layui-input" autocomplete="off" placeholder="请输入角色ID">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" id="roleName" class="layui-input" autocomplete="off" placeholder="请输入角色名称">
+      </div>
+      <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="createTime" readonly placeholder="创建时间">
+      </div>
+      <div class="layui-input-inline layui-form">
+        <select id="status">
+          <option value="">请选择角色状态</option>
+          <option value="1">正常</option>
+          <option value="0">弃用</option>
+        </select>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn" id="search">查询</button>
+      </div>
+    </div>
+
+  </div>
+  <table class="layui-hide" id="role_table" lay-filter="role_table"></table>
+  <div id="laypage" class="layui-laypage-btn"></div>
+</div>
 </body>
 <!-- 角色新增按钮：点击打开角色新增表单 -->
 <script type="text/html" id="toolbar">
@@ -84,6 +84,10 @@
       <i class="layui-icon">&#xe608;</i> 新增角色
     </button>
   </div>
+</script>
+<!-- 编辑角色按钮 -->
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree'], function () {
@@ -173,7 +177,7 @@
               }
             },
             {field: 'description', title: '描述', width: 300},
-            {title: '操作', width: 250}
+            {title: '操作', width: 250, toolbar: '#tool'}
           ]
         ]
         , data: data
@@ -316,6 +320,46 @@
         }
       }, "POST", false);
     });
+
+    //操作项事件
+    table.on('tool(role_table)', function (obj) {
+      var data = obj.data;
+      switch (obj.event) {
+        case 'edit':
+          $(".role_table_div").hide();
+          //显示编辑窗口
+          $(".operation_role").show();
+          $(".title").html("编辑角色");
+          getRoleDetail(data.id);
+          break;
+      }
+    });
+
+    // 获取角色详情
+    var getRoleDetail = function (id) {
+      CoreUtil.sendAjax("/api/role/" + id, null, function (res) {
+        $(".operation_role input[name=id]").val(res.data.id);
+        $(".operation_role input[name=pid]").val(res.data.pid);
+        $(".operation_role input[name=name]").val(res.data.name);
+        $(".operation_role input[name=description]").val(res.data.description);
+        if (res.data.status == 1) {
+          $(".operation_role input[name=status]").attr('checked', 'checked');
+          $(".operation_role input[name=status]").attr('type', 'hidden').val(1);
+          var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+          x[0].setAttribute("class", "layui-unselect layui-form-switch layui-form-onswitch");
+          var d = document.getElementsByTagName('em')[0];
+          d.firstChild.nodeValue = '启用';
+        } else {
+          $(".operation_role input[name=status]").attr('type', 'hidden').removeAttr("checked").val(0);
+          var x = document.getElementsByClassName("layui-unselect layui-form-switch");
+          x[0].setAttribute("class", "layui-unselect layui-form-switch");
+          var d = document.getElementsByTagName('em')[0];
+          d.firstChild.nodeValue = '禁用';
+        }
+        loadPermissionTree(res.data.menuTree);
+        form.render(); //更新全部
+      }, "GET", false);
+    }
   });
 </script>
 </html>

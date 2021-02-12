@@ -115,4 +115,10 @@
     from sys_role_permission
     where permission_id = #{permissionId}
   </delete>
+  <!-- 根据角色获取它管理的菜单权限 -->
+  <select id="getPermissionIdsByRoleId" resultType="java.lang.String">
+    SELECT permission_id
+    from sys_role_permission
+    where role_id = #{roleId}
+  </select>
 </mapper>

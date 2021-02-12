@@ -36,4 +36,12 @@ public interface RoleService {
      * @return
      */
     List<SysRole> selectAll();
+
+    /**
+     * 查询角色的详情信息
+     *
+     * @param id
+     * @return
+     */
+    SysRole detailInfo(String id);
 }

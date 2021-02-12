@@ -1,8 +1,10 @@
 package com.zzk.shiroadmin.model.entity;
 
+import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class SysRole {
@@ -19,4 +21,6 @@ public class SysRole {
     private Date updateTime;
 
     private Integer deleted;
+
+    private List<MenuRespNodeVO> menuTree;
 }

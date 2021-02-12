@@ -17,7 +17,7 @@ public interface RolePermissionService {
     void addRolePermission(RolePermissionRelation vo);
 
     /**
-     * 根据permissionId获取查询关联的角色id
+     * 根据permissionId查询关联的角色id
      *
      * @param permissionId
      * @return
@@ -30,4 +30,12 @@ public interface RolePermissionService {
      * @param permissionId
      */
     void removeRolesByPermissionId(String permissionId);
+
+    /**
+     * 根据roleId查询关联的权限id
+     *
+     * @param roleId
+     * @return
+     */
+    List<String> getPermissionIdsByRoleId(String roleId);
 }

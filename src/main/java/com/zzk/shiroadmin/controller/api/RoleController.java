@@ -42,4 +42,11 @@ public class RoleController {
     public SysRole addRole(@RequestBody @Valid RoleAddReqVO vo) {
         return roleService.addRole(vo);
     }
+
+    @LogPrint(description = "角色详情获取接口")
+    @ApiOperation(value = "角色接详情获取口")
+    @GetMapping("/{id}")
+    public SysRole detailInfo(@PathVariable("id") String id) {
+        return roleService.detailInfo(id);
+    }
 }
