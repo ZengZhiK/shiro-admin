@@ -31,11 +31,10 @@ public class RolePermissionServiceImpl implements RolePermissionService {
             return;
         }
 
-        sysRolePermissionMapper.removeByRoleId(vo.getRoleId());
+        sysRolePermissionMapper.removePermissionsByRoleId(vo.getRoleId());
 
         List<SysRolePermission> rolePermissionList = new ArrayList<>();
-        for (String permissionId :
-                vo.getPermissionIds()) {
+        for (String permissionId : vo.getPermissionIds()) {
             SysRolePermission sysRolePermission = new SysRolePermission();
             sysRolePermission.setId(UUID.randomUUID().toString());
             sysRolePermission.setCreateTime(new Date());

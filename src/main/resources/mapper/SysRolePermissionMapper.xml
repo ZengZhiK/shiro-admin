@@ -98,7 +98,7 @@
       </foreach>
   </insert>
   <!-- 通过角色id删除关联数据 -->
-  <delete id="removeByRoleId">
+  <delete id="removePermissionsByRoleId">
     delete
     from sys_role_permission
     where role_id = #{roleId}

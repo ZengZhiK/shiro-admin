@@ -271,6 +271,17 @@
           $(".operation_role").hide();
           $(".layui-laypage-btn").click();
         }, "POST", false);
+      } else {
+        CoreUtil.sendAjax("/api/role/update", JSON.stringify(params), function (res) {
+          //显示表格
+          $(".role_table_div").show();
+          //隐藏编辑窗口
+          $(".operation_role").hide();
+          $(".layui-laypage-btn").click();
+        }, "PUT", false, function (res) {
+          //无权限更新角色提示
+          layer.msg("抱歉！您暂无更新角色信息详情的权限");
+        });
       }
       return false;
     });

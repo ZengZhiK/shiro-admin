@@ -24,4 +24,6 @@ public interface SysUserRoleMapper {
     int batchInsertUserRole(List<SysUserRole> userRoleList);
 
     List<String> getUserIdsByRoleIds(List<String> roleIds);
+
+    List<String> getUserIdsByRoleId(String roleId);
 }

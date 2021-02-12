@@ -31,4 +31,12 @@ public interface UserRoleService {
      * @return
      */
     List<String> getUserIdsByRoleIds(List<String> roleIds);
+
+    /**
+     * 通过单个角色id查询关联的用户id
+     *
+     * @param roleId
+     * @return
+     */
+    List<String> getUserIdsByRoleId(String roleId);
 }

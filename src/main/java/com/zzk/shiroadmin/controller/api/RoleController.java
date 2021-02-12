@@ -1,10 +1,12 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.entity.SysRole;
 import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
+import com.zzk.shiroadmin.model.vo.req.RoleUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.PermissionService;
 import com.zzk.shiroadmin.service.RoleService;
@@ -48,5 +50,13 @@ public class RoleController {
     @GetMapping("/{id}")
     public SysRole detailInfo(@PathVariable("id") String id) {
         return roleService.detailInfo(id);
+    }
+
+    @LogPrint(description = "角色信息更新接口")
+    @ApiOperation(value = "角色信息更新接口")
+    @PutMapping("/update")
+    public AjaxResponse updateRole(@RequestBody @Valid RoleUpdateReqVO vo) {
+        roleService.updateRole(vo);
+        return AjaxResponse.success();
     }
 }

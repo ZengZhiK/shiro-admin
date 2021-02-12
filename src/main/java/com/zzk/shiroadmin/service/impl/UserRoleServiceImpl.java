@@ -58,4 +58,9 @@ public class UserRoleServiceImpl implements UserRoleService {
     public List<String> getUserIdsByRoleIds(List<String> roleIds) {
         return sysUserRoleMapper.getUserIdsByRoleIds(roleIds);
     }
+
+    @Override
+    public List<String> getUserIdsByRoleId(String roleId) {
+        return sysUserRoleMapper.getUserIdsByRoleId(roleId);
+    }
 }

@@ -1,25 +1,31 @@
 package com.zzk.shiroadmin.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
+import com.zzk.shiroadmin.common.utils.JwtTokenConfig;
 import com.zzk.shiroadmin.common.utils.PageUtils;
+import com.zzk.shiroadmin.common.utils.RedisUtils;
 import com.zzk.shiroadmin.mapper.SysRoleMapper;
 import com.zzk.shiroadmin.model.entity.SysRole;
 import com.zzk.shiroadmin.model.relation.RolePermissionRelation;
 import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
+import com.zzk.shiroadmin.model.vo.req.RoleUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.PermissionService;
 import com.zzk.shiroadmin.service.RolePermissionService;
 import com.zzk.shiroadmin.service.RoleService;
+import com.zzk.shiroadmin.service.UserRoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 角色 业务实现类
@@ -37,6 +43,15 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Autowired
+    private JwtTokenConfig jwtTokenConfig;
 
     @Override
     public PageVO<SysRole> pageInfo(RolePageReqVO vo) {
@@ -89,6 +104,38 @@ public class RoleServiceImpl implements RoleService {
         setChecked(menuTree, checkList);
         sysRole.setMenuTree(menuTree);
         return sysRole;
+    }
+
+    @Override
+    @Transactional
+    public void updateRole(RoleUpdateReqVO vo) {
+        // 保存角色基本信息
+        SysRole sysRole = sysRoleMapper.selectByPrimaryKey(vo.getId());
+        if (null == sysRole) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        BeanUtils.copyProperties(vo, sysRole);
+        sysRole.setUpdateTime(new Date());
+        int count = sysRoleMapper.updateByPrimaryKeySelective(sysRole);
+        if (count != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        // 修改该角色和菜单权限关联数据
+        RolePermissionRelation rolePermissionRelation = new RolePermissionRelation();
+        rolePermissionRelation.setRoleId(vo.getId());
+        rolePermissionRelation.setPermissionIds(vo.getPermissions());
+        rolePermissionService.addRolePermission(rolePermissionRelation);
+
+        //标记关联用户
+        List<String> userIds = userRoleService.getUserIdsByRoleId(vo.getId());
+        if (!userIds.isEmpty()) {
+            for (String userId : userIds) {
+                // 标记用户在用户认证的时候判断这个是否主动刷过
+                redisUtils.set(JwtConstants.JWT_REFRESH_KEY + userId, userId, jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
+            }
+        }
     }
 
     private void setChecked(List<MenuRespNodeVO> menuTree, Set<String> checkList) {

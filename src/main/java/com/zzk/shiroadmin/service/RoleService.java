@@ -3,6 +3,7 @@ package com.zzk.shiroadmin.service;
 import com.zzk.shiroadmin.model.entity.SysRole;
 import com.zzk.shiroadmin.model.vo.req.RoleAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RolePageReqVO;
+import com.zzk.shiroadmin.model.vo.req.RoleUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 
 import java.util.List;
@@ -44,4 +45,11 @@ public interface RoleService {
      * @return
      */
     SysRole detailInfo(String id);
+
+    /**
+     * 更新角色数据
+     *
+     * @param vo
+     */
+    void updateRole(RoleUpdateReqVO vo);
 }
