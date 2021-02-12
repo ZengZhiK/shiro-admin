@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.model.vo.resp.HomeRespVO;
@@ -27,6 +28,7 @@ public class HomeController {
     @Autowired
     private HomeService homeService;
 
+    @LogSave(title = "主页模块", action = "页数据获取接口")
     @LogPrint(description = "主页数据获取接口")
     @ApiOperation(value = "主页数据获取接口")
     @GetMapping

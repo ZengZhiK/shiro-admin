@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysPermission;
 import com.zzk.shiroadmin.model.vo.req.PermissionAddReqVO;
@@ -28,6 +29,7 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
+    @LogSave(title = "权限模块", action = "权限数据获取接口")
     @LogPrint(description = "权限数据获取接口")
     @ApiOperation(value = "权限数据获取接口")
     @GetMapping
@@ -35,6 +37,7 @@ public class PermissionController {
         return permissionService.selectAll();
     }
 
+    @LogSave(title = "权限模块", action = "权限树获取接口-不包括按钮")
     @LogPrint(description = "权限树获取接口-不包括按钮")
     @ApiOperation(value = "权限树获取接口-不包括按钮")
     @GetMapping("/tree")
@@ -42,6 +45,7 @@ public class PermissionController {
         return permissionService.selectMenuByTree();
     }
 
+    @LogSave(title = "权限模块", action = "权限树获取接口-包括按钮")
     @LogPrint(description = "权限树获取接口-包括按钮")
     @ApiOperation(value = "权限树获取接口-包括按钮")
     @GetMapping("/tree/all")
@@ -49,6 +53,7 @@ public class PermissionController {
         return permissionService.selectAllTree();
     }
 
+    @LogSave(title = "权限模块", action = "新增菜单权限接口")
     @LogPrint(description = "新增菜单权限接口")
     @ApiOperation(value = "新增菜单权限接口")
     @PostMapping("/add")
@@ -56,6 +61,7 @@ public class PermissionController {
         return permissionService.addPermission(vo);
     }
 
+    @LogSave(title = "权限模块", action = "修改菜单权限接口")
     @LogPrint(description = "修改菜单权限接口")
     @ApiOperation(value = "修改菜单权限接口")
     @PutMapping("/update")
@@ -64,6 +70,7 @@ public class PermissionController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "权限模块", action = "删除菜单权限接口")
     @LogPrint(description = "删除菜单权限接口")
     @ApiOperation(value = "删除菜单权限接口")
     @DeleteMapping("/delete/{permissionId}")

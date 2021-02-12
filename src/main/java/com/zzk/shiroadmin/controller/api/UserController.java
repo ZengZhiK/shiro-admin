@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
@@ -32,6 +33,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @LogSave(title = "用户模块", action = "用户登录接口")
     @LogPrint(description = "用户登录接口")
     @ApiOperation(value = "用户登录接口")
     @PostMapping("/login")
@@ -39,6 +41,7 @@ public class UserController {
         return userService.login(vo);
     }
 
+    @LogSave(title = "用户模块", action = "用户数据分页获取接口")
     @LogPrint(description = "用户数据分页获取接口")
     @ApiOperation(value = "用户数据分页获取接口")
     @PostMapping
@@ -46,6 +49,7 @@ public class UserController {
         return userService.pageInfo(vo);
     }
 
+    @LogSave(title = "用户模块", action = "新增用户接口")
     @LogPrint(description = "新增用户接口")
     @ApiOperation(value = "新增用户接口")
     @PostMapping("/add")
@@ -53,6 +57,7 @@ public class UserController {
         return userService.addUser(vo);
     }
 
+    @LogSave(title = "用户模块", action = "查询用户角色接口")
     @LogPrint(description = "查询用户角色接口")
     @ApiOperation(value = "查询用户角色接口")
     @GetMapping("/roles/{userId}")
@@ -60,6 +65,7 @@ public class UserController {
         return userService.getUserOwnRole(userId);
     }
 
+    @LogSave(title = "用户模块", action = "保存用户角色接口")
     @LogPrint(description = "保存用户角色接口")
     @ApiOperation(value = "保存用户角色接口")
     @PutMapping("/roles")
@@ -68,6 +74,7 @@ public class UserController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "用户模块", action = "刷新Token接口")
     @LogPrint(description = "刷新Token接口")
     @ApiOperation(value = "刷新Token接口")
     @GetMapping("/token")
@@ -77,6 +84,7 @@ public class UserController {
         return AjaxResponse.success(newAccessToken);
     }
 
+    @LogSave(title = "用户模块", action = "修改用户信息接口")
     @LogPrint(description = "修改用户信息接口")
     @ApiOperation(value = "修改用户信息接口")
     @PutMapping("/update")
@@ -89,6 +97,7 @@ public class UserController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "用户模块", action = "批量删除用户信息接口")
     @LogPrint(description = "批量删除用户信息接口")
     @ApiOperation(value = "批量删除用户信息接口")
     @DeleteMapping("/delete")

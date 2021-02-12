@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.vo.req.DeptAddReqVO;
@@ -28,6 +29,7 @@ public class DeptController {
     @Autowired
     private DeptService deptService;
 
+    @LogSave(title = "部门模块", action = "部门数据获取接口")
     @LogPrint(description = "部门数据获取接口")
     @ApiOperation(value = "部门数据获取接口")
     @GetMapping
@@ -35,6 +37,7 @@ public class DeptController {
         return deptService.selectAll();
     }
 
+    @LogSave(title = "部门模块", action = "部门树获取接口")
     @LogPrint(description = "部门树获取接口")
     @ApiOperation(value = "部门树获取接口")
     @GetMapping("/tree")
@@ -42,6 +45,7 @@ public class DeptController {
         return deptService.selectAllTree(deptId);
     }
 
+    @LogSave(title = "部门模块", action = "新增部门接口")
     @LogPrint(description = "新增部门接口")
     @ApiOperation(value = "新增部门接口")
     @PostMapping("/add")
@@ -49,6 +53,7 @@ public class DeptController {
         return deptService.addDept(vo);
     }
 
+    @LogSave(title = "部门模块", action = "修改部门接口")
     @LogPrint(description = "修改部门接口")
     @ApiOperation(value = "修改新增部门接口")
     @PutMapping("/update")
@@ -57,6 +62,7 @@ public class DeptController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "部门模块", action = "删除部门接口")
     @LogPrint(description = "删除部门接口")
     @ApiOperation(value = "删除新增部门接口")
     @DeleteMapping("/delete/{id}")
