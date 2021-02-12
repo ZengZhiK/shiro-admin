@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.mapper;
 
 import com.zzk.shiroadmin.model.entity.SysDept;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface SysDeptMapper {
     int updateByPrimaryKey(SysDept record);
 
     List<SysDept> selectAll();
+
+    void updateRelationCode(@Param("oleRelation") String oleRelation, @Param("newRelation") String newRelation, @Param("relationCode") String relationCode);
 }

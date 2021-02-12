@@ -1,8 +1,10 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.vo.req.DeptAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.DeptUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.DeptRespNodeVO;
 import com.zzk.shiroadmin.service.DeptService;
 import io.swagger.annotations.Api;
@@ -36,8 +38,8 @@ public class DeptController {
     @LogPrint(description = "部门树获取接口")
     @ApiOperation(value = "部门树获取接口")
     @GetMapping("/tree")
-    public List<DeptRespNodeVO> getAllDeptTree() {
-        return deptService.selectAllTree();
+    public List<DeptRespNodeVO> getAllDeptTree(@RequestParam(required = false) String deptId) {
+        return deptService.selectAllTree(deptId);
     }
 
     @LogPrint(description = "新增部门接口")
@@ -45,5 +47,13 @@ public class DeptController {
     @PostMapping("/add")
     public SysDept addDept(@RequestBody @Valid DeptAddReqVO vo) {
         return deptService.addDept(vo);
+    }
+
+    @LogPrint(description = "修改部门接口")
+    @ApiOperation(value = "修改新增部门接口")
+    @PutMapping("/update")
+    public AjaxResponse updateDept(@RequestBody @Valid DeptUpdateReqVO vo) {
+        deptService.updateDept(vo);
+        return AjaxResponse.success();
     }
 }

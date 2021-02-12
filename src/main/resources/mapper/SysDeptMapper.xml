@@ -180,4 +180,10 @@
     from sys_dept
     where deleted=1
   </select>
+  <!-- 维护Relation_code 的层级关系 -->
+  <update id="updateRelationCode">
+    UPDATE sys_dept
+    set relation_code = replace(relation_code, #{oleRelation}, #{newRelation})
+    where relation_code LIKE CONCAT(#{relationCode},'%')
+  </update>
 </mapper>

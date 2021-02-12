@@ -2,6 +2,7 @@ package com.zzk.shiroadmin.service;
 
 import com.zzk.shiroadmin.model.entity.SysDept;
 import com.zzk.shiroadmin.model.vo.req.DeptAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.DeptUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.DeptRespNodeVO;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface DeptService {
      *
      * @return
      */
-    List<DeptRespNodeVO> selectAllTree();
+    List<DeptRespNodeVO> selectAllTree(String deptId);
 
     /**
      * 新增部门
@@ -34,4 +35,11 @@ public interface DeptService {
      * @return
      */
     SysDept addDept(DeptAddReqVO vo);
+
+    /**
+     * 更新部门
+     *
+     * @param vo
+     */
+    void updateDept(DeptUpdateReqVO vo);
 }
