@@ -39,4 +39,19 @@ public interface UserRoleService {
      * @return
      */
     List<String> getUserIdsByRoleId(String roleId);
+
+    /**
+     * 根据roleId查询关联的用户
+     *
+     * @param roleId
+     * @return
+     */
+    List<String> getUserIdsBtRoleId(String roleId);
+
+    /**
+     * 根据roleId删除关联的用户
+     *
+     * @param roleId
+     */
+    void removeUsersByRoleId(String roleId);
 }

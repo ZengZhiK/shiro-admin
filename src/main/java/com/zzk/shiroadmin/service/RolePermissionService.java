@@ -38,4 +38,12 @@ public interface RolePermissionService {
      * @return
      */
     List<String> getPermissionIdsByRoleId(String roleId);
+
+    /**
+     * 根据roleId删除关联的权限id
+     *
+     * @param roleId
+     * @return
+     */
+    void removePermissionsByRoleId(String roleId);
 }

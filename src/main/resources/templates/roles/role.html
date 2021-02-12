@@ -88,6 +88,7 @@
 <!-- 编辑角色按钮 -->
 <script type="text/html" id="tool">
   <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree'], function () {
@@ -343,6 +344,9 @@
           $(".title").html("编辑角色");
           getRoleDetail(data.id);
           break;
+        case 'del':
+          tipDialog(data.id, data.name);
+          break;
       }
     });
 
@@ -370,6 +374,23 @@
         loadPermissionTree(res.data.menuTree);
         form.render(); //更新全部
       }, "GET", false);
+    }
+
+    //删除前确认对话框
+    var tipDialog = function (id, name) {
+      layer.open({
+        content: "确定要删除 " + name + " 角色么",
+        yes: function (index, layero) {
+          layer.close(index); //如果设定了yes回调，需进行手工关闭
+          CoreUtil.sendAjax("/api/role/delete/" + id, null, function (res) {
+            layer.msg(res.msg);
+            $(".layui-laypage-btn").click();
+          }, "DELETE", false, function (res) {
+            //无权限删除角色提示
+            layer.msg("抱歉！您暂无删除角色信息详情的权限");
+          });
+        }
+      });
     }
   });
 </script>

@@ -19,11 +19,13 @@ public interface SysUserRoleMapper {
 
     List<String> getRoleIdsByUserId(String userId);
 
-    int removeByUserId(String userId);
+    void removeRolesByUserId(String userId);
 
     int batchInsertUserRole(List<SysUserRole> userRoleList);
 
     List<String> getUserIdsByRoleIds(List<String> roleIds);
 
     List<String> getUserIdsByRoleId(String roleId);
+
+    void removeUsersByRoleId(String roleId);
 }

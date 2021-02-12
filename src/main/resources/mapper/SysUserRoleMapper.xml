@@ -86,7 +86,7 @@
     where user_id = #{userId}
   </select>
   <!-- 删除该用户关联的角色 -->
-  <delete id="removeByUserId">
+  <delete id="removeRolesByUserId">
     delete
     from sys_user_role
     where user_id = #{userId}
@@ -124,4 +124,10 @@
     from sys_user_role
     where role_id = #{roleId}
   </select>
+  <!-- 根据角色删除用户关联数据 -->
+  <delete id="removeUsersByRoleId">
+    delete
+    from sys_user_role
+    where role_id=#{roleId}
+  </delete>
 </mapper>

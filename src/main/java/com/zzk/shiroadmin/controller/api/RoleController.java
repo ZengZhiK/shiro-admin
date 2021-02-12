@@ -59,4 +59,12 @@ public class RoleController {
         roleService.updateRole(vo);
         return AjaxResponse.success();
     }
+
+    @LogPrint(description = "角色信息删除接口")
+    @ApiOperation(value = "角色信息删除接口")
+    @DeleteMapping("/delete/{id}")
+    public AjaxResponse deleteRole(@PathVariable("id") String id) {
+        roleService.deleteRole(id);
+        return AjaxResponse.success();
+    }
 }

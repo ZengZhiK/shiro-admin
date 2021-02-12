@@ -33,7 +33,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Transactional
     public void addUserRole(UserOwnRoleReqVO vo) {
         //删除他们关联数据
-        sysUserRoleMapper.removeByUserId(vo.getUserId());
+        sysUserRoleMapper.removeRolesByUserId(vo.getUserId());
         if (vo.getRoleIds() == null || vo.getRoleIds().isEmpty()) {
             return;
         }
@@ -62,5 +62,15 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public List<String> getUserIdsByRoleId(String roleId) {
         return sysUserRoleMapper.getUserIdsByRoleId(roleId);
+    }
+
+    @Override
+    public List<String> getUserIdsBtRoleId(String roleId) {
+        return sysUserRoleMapper.getUserIdsByRoleId(roleId);
+    }
+
+    @Override
+    public void removeUsersByRoleId(String roleId) {
+        sysUserRoleMapper.removeUsersByRoleId(roleId);
     }
 }

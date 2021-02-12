@@ -138,6 +138,36 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteRole(String id) {
+        // 就更新删除的角色数据
+        SysRole sysRole = new SysRole();
+        sysRole.setId(id);
+        sysRole.setDeleted(0);
+        sysRole.setUpdateTime(new Date());
+
+        int i = sysRoleMapper.updateByPrimaryKeySelective(sysRole);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        // 角色菜单权限关联数据删除
+        rolePermissionService.removePermissionsByRoleId(id);
+
+        // 角色用户关联数据删除
+        List<String> userIds = userRoleService.getUserIdsBtRoleId(id);
+        userRoleService.removeUsersByRoleId(id);
+
+        // 把跟该角色关联的用户标记起来，需要刷新token
+        if (!userIds.isEmpty()) {
+            for (String userId : userIds) {
+                // 标记用户 在用户认证的时候判断这个是否主动刷过
+                redisUtils.set(JwtConstants.JWT_REFRESH_KEY + userId, userId, jwtTokenConfig.getAccessTokenExpireTime().toMillis(), TimeUnit.MILLISECONDS);
+            }
+        }
+    }
+
     private void setChecked(List<MenuRespNodeVO> menuTree, Set<String> checkList) {
 
         for (MenuRespNodeVO node : menuTree) {

@@ -52,4 +52,11 @@ public interface RoleService {
      * @param vo
      */
     void updateRole(RoleUpdateReqVO vo);
+
+    /**
+     * 根据id删除角色
+     *
+     * @param id
+     */
+    void deleteRole(String id);
 }
