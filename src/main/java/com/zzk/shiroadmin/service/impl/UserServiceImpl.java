@@ -222,6 +222,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<SysUser> getUsersByDeptIds(List<String> deptIds) {
+        return sysUserMapper.selectUsersByDeptIds(deptIds);
+    }
+
     private List<String> getRoleByUserId(String userName) {
         List<String> list = new ArrayList<>();
         if (userName.equals("admin")) {

@@ -25,4 +25,6 @@ public interface SysUserMapper {
     List<SysUser> selectAll(UserPageReqVO vo);
 
     int deleteUsers(@Param("userIds") List<String> userIds, @Param("operationId") String operationId, @Param("updateTime") Date updateTime);
+
+    List<SysUser> selectUsersByDeptIds(List<String> deptIds);
 }

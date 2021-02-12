@@ -7,10 +7,12 @@ import com.zzk.shiroadmin.common.utils.CodeUtils;
 import com.zzk.shiroadmin.common.utils.RedisUtils;
 import com.zzk.shiroadmin.mapper.SysDeptMapper;
 import com.zzk.shiroadmin.model.entity.SysDept;
+import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.DeptAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.DeptUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.resp.DeptRespNodeVO;
 import com.zzk.shiroadmin.service.DeptService;
+import com.zzk.shiroadmin.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,9 @@ public class DeptServiceImpl implements DeptService {
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public List<SysDept> selectAll() {
@@ -133,6 +138,28 @@ public class DeptServiceImpl implements DeptService {
                 newRelation = newParent.getRelationCode();
             }
             sysDeptMapper.updateRelationCode(oleRelation, newRelation, sysDept.getRelationCode());
+        }
+    }
+
+    @Override
+    public void deletedDept(String id) {
+        // 查找它和它的叶子节点
+        SysDept sysDept = sysDeptMapper.selectByPrimaryKey(id);
+        if (sysDept == null) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+        List<String> deptIds = sysDeptMapper.selectChildIds(sysDept.getRelationCode());
+
+        // 判断它和它子集的叶子节点是否关联有用户
+        List<SysUser> sysUsers = userService.getUsersByDeptIds(deptIds);
+        if (!sysUsers.isEmpty()) {
+            throw new BusinessException(BusinessExceptionType.NOT_PERMISSION_DELETED_DEPT);
+        }
+
+        // 逻辑删除部门数据
+        int count = sysDeptMapper.deletedDepts(deptIds, new Date());
+        if (count == 0) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
     }
 

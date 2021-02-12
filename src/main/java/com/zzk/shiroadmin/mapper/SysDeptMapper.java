@@ -3,6 +3,7 @@ package com.zzk.shiroadmin.mapper;
 import com.zzk.shiroadmin.model.entity.SysDept;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SysDeptMapper {
@@ -21,4 +22,8 @@ public interface SysDeptMapper {
     List<SysDept> selectAll();
 
     void updateRelationCode(@Param("oleRelation") String oleRelation, @Param("newRelation") String newRelation, @Param("relationCode") String relationCode);
+
+    List<String> selectChildIds(String relationCode);
+
+    int deletedDepts(@Param("deptIds") List<String> deptIds, @Param("updateTime") Date updateTime);
 }

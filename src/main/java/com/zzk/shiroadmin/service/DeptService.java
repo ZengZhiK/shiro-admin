@@ -42,4 +42,11 @@ public interface DeptService {
      * @param vo
      */
     void updateDept(DeptUpdateReqVO vo);
+
+    /**
+     * 根据id删除部门
+     *
+     * @param id
+     */
+    void deletedDept(String id);
 }

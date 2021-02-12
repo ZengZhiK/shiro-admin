@@ -186,4 +186,24 @@
     set relation_code = replace(relation_code, #{oleRelation}, #{newRelation})
     where relation_code LIKE CONCAT(#{relationCode},'%')
   </update>
+  <!-- 获取该组织下所有子集包括自己 -->
+  <select id="selectChildIds" resultType="java.lang.String">
+    select id
+    from sys_dept
+    where relation_code LIKE CONCAT(#{relationCode},'%') and deleted=1
+  </select>
+  <!-- 更新删除部门数据 -->
+  <update id="deletedDepts">
+    update sys_dept
+    <set>
+      deleted = 0,
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id in
+    <foreach collection="deptIds" open="(" close=")" separator="," item="item">
+      #{item}
+    </foreach>
+  </update>
 </mapper>

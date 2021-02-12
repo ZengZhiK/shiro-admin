@@ -78,4 +78,12 @@ public interface UserService {
      * @param operationId
      */
     void deleteUsers(List<String> userIds, String operationId);
+
+    /**
+     * 根据部门id查询关联的用户
+     *
+     * @param deptIds
+     * @return
+     */
+    List<SysUser> getUsersByDeptIds(List<String> deptIds);
 }

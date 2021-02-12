@@ -56,4 +56,12 @@ public class DeptController {
         deptService.updateDept(vo);
         return AjaxResponse.success();
     }
+
+    @LogPrint(description = "删除部门接口")
+    @ApiOperation(value = "删除新增部门接口")
+    @DeleteMapping("/delete/{id}")
+    public AjaxResponse deleteDept(@PathVariable("id") String id) {
+        deptService.deletedDept(id);
+        return AjaxResponse.success();
+    }
 }
