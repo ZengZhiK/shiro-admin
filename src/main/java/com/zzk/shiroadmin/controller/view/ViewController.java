@@ -92,4 +92,12 @@ public class ViewController {
     public String user() {
         return "users/user";
     }
+
+    /**
+     * 跳转至日志管理页面
+     */
+    @GetMapping("/logs")
+    public String log() {
+        return "logs/log";
+    }
 }
