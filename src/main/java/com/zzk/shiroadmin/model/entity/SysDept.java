@@ -2,10 +2,13 @@ package com.zzk.shiroadmin.model.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class SysDept {
+public class SysDept implements Serializable {
+    private static final long serialVersionUID = -1806918224804001406L;
+
     private String id;
 
     private String deptNo;

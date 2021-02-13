@@ -3,11 +3,14 @@ package com.zzk.shiroadmin.model.entity;
 import com.zzk.shiroadmin.model.vo.resp.MenuRespNodeVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class SysRole {
+public class SysRole implements Serializable {
+    private static final long serialVersionUID = 1135294330937202187L;
+
     private String id;
 
     private String name;

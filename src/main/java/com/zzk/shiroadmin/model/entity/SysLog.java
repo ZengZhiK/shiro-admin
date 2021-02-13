@@ -2,10 +2,13 @@ package com.zzk.shiroadmin.model.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class SysLog {
+public class SysLog implements Serializable {
+    private static final long serialVersionUID = -3291721390371496234L;
+
     private String id;
 
     private String userId;

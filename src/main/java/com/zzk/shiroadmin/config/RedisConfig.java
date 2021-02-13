@@ -19,10 +19,10 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
+//        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
         // 设置值value的序列化方式
-        redisTemplate.setValueSerializer(fastJsonRedisSerializer);
-        redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
+//        redisTemplate.setValueSerializer(fastJsonRedisSerializer);
+//        redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
 
         // 设置键key的序列化方式
         redisTemplate.setKeySerializer(new StringRedisSerializer());

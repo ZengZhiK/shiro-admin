@@ -298,6 +298,11 @@ public class RedisUtils {
         return redisTemplate.opsForHash().increment(key, field, increment);
 
     }
+
+    public Long hsize(String key) {
+        return redisTemplate.opsForHash().size(key);
+    }
+
     //***************List数据类型***************
 
     /**

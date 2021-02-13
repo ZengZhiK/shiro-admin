@@ -2,10 +2,13 @@ package com.zzk.shiroadmin.model.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class SysPermission {
+public class SysPermission implements Serializable {
+    private static final long serialVersionUID = -927062097978594996L;
+
     private String id;
 
     private String code;
