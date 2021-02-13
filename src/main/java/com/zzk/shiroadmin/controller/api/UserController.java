@@ -162,4 +162,15 @@ public class UserController {
         userService.updateDetailInfo(vo, operationId);
         return AjaxResponse.success();
     }
+
+    @LogSave(title = "用户模块", action = "用户密码修改接口")
+    @LogPrint(description = "用户密码修改接口")
+    @ApiOperation(value = "用户密码修改接口")
+    @PutMapping("/pwd/update")
+    public AjaxResponse updatePwd(@RequestBody @Valid PasswordUpdateReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
+        userService.updatePwd(vo, accessToken, refreshToken);
+        return AjaxResponse.success();
+    }
 }

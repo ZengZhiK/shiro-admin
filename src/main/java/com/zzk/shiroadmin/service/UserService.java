@@ -110,4 +110,14 @@ public interface UserService {
      * @param operationId
      */
     void updateDetailInfo(UserDetailInfoUpdateReqVO vo, String operationId);
+
+    /**
+     * 密码修改 请求VO
+     *
+     * @param vo
+     * @param userId
+     * @param accessToken
+     * @param refreshToken
+     */
+    void updatePwd(PasswordUpdateReqVO vo, String accessToken, String refreshToken);
 }

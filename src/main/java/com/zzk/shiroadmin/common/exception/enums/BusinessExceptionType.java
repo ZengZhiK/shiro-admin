@@ -15,6 +15,7 @@ public enum BusinessExceptionType {
     USER_INPUT_ERROR(4000000, "您输入的数据错误!"),
     ACCOUNT_NOT_EXIST_ERROR(4000001, "账号不存在，请注册！"),
     ACCOUNT_PASSWORD_ERROR(4000002, "用户名或密码错误！"),
+    OLD_PASSWORD_ERROR(4000003, "旧密码输入错误"),
 
     DATA_ERROR(4000001, "传入数据异常"),
     PARENT_DEPT_IS_NULL_ERROR(4000002, "父级部门不存在错误！"),

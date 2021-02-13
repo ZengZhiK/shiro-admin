@@ -266,6 +266,41 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void updatePwd(PasswordUpdateReqVO vo, String accessToken, String refreshToken) {
+        String userId = JwtTokenUtils.getUserId(accessToken);
+
+        //校验旧密码
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+        if (sysUser == null) {
+            throw new BusinessException(BusinessExceptionType.ACCESS_TOKEN_ERROR);
+        }
+        try {
+            if (!PasswordUtils.matches(sysUser.getSalt(), vo.getOldPwd(), sysUser.getPassword())) {
+                throw new BusinessException(BusinessExceptionType.OLD_PASSWORD_ERROR);
+            }
+        } catch (Exception e) {
+            throw new BusinessException(BusinessExceptionType.OLD_PASSWORD_ERROR);
+        }
+        //保存新密码
+        sysUser.setUpdateTime(new Date());
+        sysUser.setUpdateId(userId);
+        try {
+            sysUser.setPassword(PasswordUtils.encode(vo.getNewPwd(), sysUser.getSalt()));
+        } catch (Exception e) {
+            throw new BusinessException(BusinessExceptionType.ACCOUNT_PASSWORD_ERROR);
+        }
+        int i = sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        if (i != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        // 把token 加入黑名单 禁止再访问我们的系统资源
+        redisUtils.set(RedisConstants.JWT_ACCESS_TOKEN_BLACKLIST + accessToken, userId, JwtTokenUtils.getRemainingTime(accessToken), TimeUnit.MILLISECONDS);
+        // 把 refreshToken 加入黑名单 禁止再拿来刷新token
+        redisUtils.set(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken, userId, JwtTokenUtils.getRemainingTime(refreshToken), TimeUnit.MILLISECONDS);
+    }
+
     private List<String> getRoleByUserId(String userName) {
         List<String> list = new ArrayList<>();
         if (userName.equals("admin")) {

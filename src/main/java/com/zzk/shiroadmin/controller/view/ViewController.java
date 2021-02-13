@@ -108,4 +108,12 @@ public class ViewController {
     public String userInfo() {
         return "users/user_edit";
     }
+
+    /**
+     * 跳转至密码修改页面
+     */
+    @GetMapping("/user/pwd")
+    public String userPwd() {
+        return "users/pwd_edit";
+    }
 }
