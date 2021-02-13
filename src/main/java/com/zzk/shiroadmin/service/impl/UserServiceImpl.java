@@ -318,8 +318,9 @@ public class UserServiceImpl implements UserService {
             list.add("sys:user:update");
 //            list.add("sys:user:delete");
             list.add("sys:user:list");
+            list.add("sys:role:list");
         } else {
-            list.add("sys:user:list");
+//            list.add("sys:user:list");
 //            list.add("sys:user:add");
         }
         return list;

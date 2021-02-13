@@ -48,8 +48,8 @@
   </div>
 </div>
 <!-- 角色表格 -->
-<div class="role_table_div">
-  <div id="searchParam" shiro:hasPermission="sys:role:list">
+<div class="role_table_div" shiro:hasPermission="sys:role:list">
+  <div id="searchParam">
     <div class="layui-form-item">
       <div class="layui-input-inline">
         <input type="text" id="roleId" class="layui-input" autocomplete="off" placeholder="请输入角色ID">
