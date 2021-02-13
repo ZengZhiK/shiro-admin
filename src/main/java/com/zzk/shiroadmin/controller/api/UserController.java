@@ -95,12 +95,6 @@ public class UserController {
     public AjaxResponse refreshToken(HttpServletRequest request) {
         String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
 
-        //它是否过期
-        //它是否被加如了黑名
-        if (!JwtTokenUtils.validateToken(refreshToken) || redisUtils.hasKey(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken)) {
-            throw new BusinessException(BusinessExceptionType.REFRESH_TOKEN_ERROR);
-        }
-
         String newAccessToken = userService.refreshToken(refreshToken);
         return AjaxResponse.success(newAccessToken);
     }
