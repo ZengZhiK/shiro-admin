@@ -142,4 +142,24 @@ public class UserController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "用户模块", action = "用户详情信息获取接口")
+    @LogPrint(description = "用户详情信息获取接口")
+    @ApiOperation(value = "用户详情信息获取接口")
+    @GetMapping("/info")
+    public SysUser detailInfo(HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String userId = JwtTokenUtils.getUserId(accessToken);
+        return userService.detailInfo(userId);
+    }
+
+    @LogSave(title = "用户模块", action = "用户详情信息修改接口")
+    @LogPrint(description = "用户详情信息修改接口")
+    @ApiOperation(value = "用户详情信息修改接口")
+    @PutMapping("/info/update")
+    public AjaxResponse updateDetailInfo(@RequestBody @Valid UserDetailInfoUpdateReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String operationId = JwtTokenUtils.getUserId(accessToken);
+        userService.updateDetailInfo(vo, operationId);
+        return AjaxResponse.success();
+    }
 }

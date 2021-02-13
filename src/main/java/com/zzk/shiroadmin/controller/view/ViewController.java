@@ -100,4 +100,12 @@ public class ViewController {
     public String log() {
         return "logs/log";
     }
+
+    /**
+     * 跳转至用户信息页面
+     */
+    @GetMapping("/user/info")
+    public String userInfo() {
+        return "users/user_edit";
+    }
 }

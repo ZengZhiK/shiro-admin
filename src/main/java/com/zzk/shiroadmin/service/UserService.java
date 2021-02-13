@@ -94,4 +94,20 @@ public interface UserService {
      * @param refreshToken
      */
     void logout(String accessToken, String refreshToken);
+
+    /**
+     * 获取用户详细信息
+     *
+     * @param userId
+     * @return
+     */
+    SysUser detailInfo(String userId);
+
+    /**
+     * 更新用户详细信息
+     *
+     * @param vo
+     * @param operationId
+     */
+    void updateDetailInfo(UserDetailInfoUpdateReqVO vo, String operationId);
 }

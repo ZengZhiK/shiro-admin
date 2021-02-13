@@ -248,6 +248,24 @@ public class UserServiceImpl implements UserService {
         redisUtils.set(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken, userId, JwtTokenUtils.getRemainingTime(refreshToken), TimeUnit.MILLISECONDS);
     }
 
+    @Override
+    public SysUser detailInfo(String userId) {
+        return sysUserMapper.selectByPrimaryKey(userId);
+    }
+
+    @Override
+    public void updateDetailInfo(UserDetailInfoUpdateReqVO vo, String operationId) {
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(vo, sysUser);
+        sysUser.setId(operationId);
+        sysUser.setUpdateTime(new Date());
+        sysUser.setUpdateId(operationId);
+        int count = sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        if (count != 1) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+    }
+
     private List<String> getRoleByUserId(String userName) {
         List<String> list = new ArrayList<>();
         if (userName.equals("admin")) {
