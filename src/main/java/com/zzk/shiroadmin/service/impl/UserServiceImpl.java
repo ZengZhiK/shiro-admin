@@ -2,7 +2,7 @@ package com.zzk.shiroadmin.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
-import com.zzk.shiroadmin.common.constant.RedisConstant;
+import com.zzk.shiroadmin.common.constant.RedisConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.*;
@@ -19,6 +19,8 @@ import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
 import com.zzk.shiroadmin.service.RoleService;
 import com.zzk.shiroadmin.service.UserRoleService;
 import com.zzk.shiroadmin.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -205,9 +207,9 @@ public class UserServiceImpl implements UserService {
 
         // 禁用用户，需要在Redis标记用户被锁定
         if (vo.getStatus() == 2) {
-            redisUtils.set(RedisConstant.ACCOUNT_LOCK_KEY + vo.getId(), vo.getId());
+            redisUtils.set(RedisConstants.ACCOUNT_LOCK_KEY + vo.getId(), vo.getId());
         } else {
-            redisUtils.delete(RedisConstant.ACCOUNT_LOCK_KEY + vo.getId());
+            redisUtils.delete(RedisConstants.ACCOUNT_LOCK_KEY + vo.getId());
         }
     }
 
@@ -218,13 +220,32 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
         for (String userId : userIds) {
-            redisUtils.set(RedisConstant.DELETED_USER_KEY + userId, userId, jwtTokenConfig.getRefreshTokenExpireAppTime().toMillis(), TimeUnit.MILLISECONDS);
+            redisUtils.set(RedisConstants.DELETED_USER_KEY + userId, userId, jwtTokenConfig.getRefreshTokenExpireAppTime().toMillis(), TimeUnit.MILLISECONDS);
         }
     }
 
     @Override
     public List<SysUser> getUsersByDeptIds(List<String> deptIds) {
         return sysUserMapper.selectUsersByDeptIds(deptIds);
+    }
+
+    @Override
+    public void logout(String accessToken, String refreshToken) {
+        if (StringUtils.isEmpty(accessToken) || StringUtils.isEmpty(refreshToken)) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            subject.logout();
+        }
+
+        String userId = JwtTokenUtils.getUserId(accessToken);
+        // 把accessToken 加入黑名单
+        redisUtils.set(RedisConstants.JWT_ACCESS_TOKEN_BLACKLIST + accessToken, userId, JwtTokenUtils.getRemainingTime(accessToken), TimeUnit.MILLISECONDS);
+
+        // 把refreshToken 加入黑名单
+        redisUtils.set(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken, userId, JwtTokenUtils.getRemainingTime(refreshToken), TimeUnit.MILLISECONDS);
     }
 
     private List<String> getRoleByUserId(String userName) {

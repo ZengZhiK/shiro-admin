@@ -30,7 +30,7 @@ var CoreUtil = (function () {
               ft(res);
             }
           }
-          else if (res.code == 4010001 || res.code == 4010003) {
+          else if (res.code == 4010001 || res.code == 4010003 || res.code == 4010004) {
             //凭证过期重新登录
             layer.msg("凭证过期请重新登录")
             top.window.location.href = "/view/login"

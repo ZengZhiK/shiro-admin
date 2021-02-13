@@ -86,4 +86,12 @@ public interface UserService {
      * @return
      */
     List<SysUser> getUsersByDeptIds(List<String> deptIds);
+
+    /**
+     * 登出
+     *
+     * @param accessToken
+     * @param refreshToken
+     */
+    void logout(String accessToken, String refreshToken);
 }

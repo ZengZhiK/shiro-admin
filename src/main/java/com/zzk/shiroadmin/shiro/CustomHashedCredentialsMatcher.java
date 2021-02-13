@@ -1,7 +1,7 @@
 package com.zzk.shiroadmin.shiro;
 
 import com.zzk.shiroadmin.common.constant.JwtConstants;
-import com.zzk.shiroadmin.common.constant.RedisConstant;
+import com.zzk.shiroadmin.common.constant.RedisConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
@@ -29,13 +29,19 @@ public class CustomHashedCredentialsMatcher extends HashedCredentialsMatcher {
         String accessToken = (String) customToken.getCredentials();
         String userId = JwtTokenUtils.getUserId(accessToken);
 
+        // 判断token 是否主动登出
+        if (redisUtils.hasKey(RedisConstants.JWT_ACCESS_TOKEN_BLACKLIST + accessToken)) {
+            throw new BusinessException(BusinessExceptionType.ACCESS_TOKEN_ERROR);
+        }
+
+
         //判断用户是否被删除
-        if(redisUtils.hasKey(RedisConstant.DELETED_USER_KEY+userId)){
+        if (redisUtils.hasKey(RedisConstants.DELETED_USER_KEY + userId)) {
             throw new BusinessException(BusinessExceptionType.ACCOUNT_HAS_DELETED_ERROR);
         }
 
         //判断是否被锁定
-        if (redisUtils.hasKey(RedisConstant.ACCOUNT_LOCK_KEY + userId)) {
+        if (redisUtils.hasKey(RedisConstants.ACCOUNT_LOCK_KEY + userId)) {
             throw new BusinessException(BusinessExceptionType.ACCOUNT_LOCKED_ERROR);
         }
 

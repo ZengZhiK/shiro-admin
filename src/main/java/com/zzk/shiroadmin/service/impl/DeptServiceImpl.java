@@ -1,6 +1,6 @@
 package com.zzk.shiroadmin.service.impl;
 
-import com.zzk.shiroadmin.common.constant.RedisConstant;
+import com.zzk.shiroadmin.common.constant.RedisConstants;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.CodeUtils;
@@ -77,7 +77,7 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public SysDept addDept(DeptAddReqVO vo) {
         String relationCode;
-        long deptCount = redisUtils.incrby(RedisConstant.DEPT_COUNT, 1);
+        long deptCount = redisUtils.incrby(RedisConstants.DEPT_COUNT, 1);
         String deptCode = CodeUtils.deptCode(String.valueOf(deptCount), 7, "0");
         SysDept parent = sysDeptMapper.selectByPrimaryKey(vo.getPid());
         if (vo.getPid().equals("0")) {

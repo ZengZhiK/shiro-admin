@@ -6,7 +6,7 @@ package com.zzk.shiroadmin.common.constant;
  * @author zzk
  * @create 2021-02-07 13:58
  */
-public class RedisConstant {
+public class RedisConstants {
     /**
      * 部门计数
      */
@@ -21,4 +21,14 @@ public class RedisConstant {
      * 标记用户是否已经删除
      */
     public static final String DELETED_USER_KEY = "deleted-user-key_";
+
+    /**
+     * refresh_token 主动退出后加入黑名单 key
+     */
+    public static final String JWT_REFRESH_TOKEN_BLACKLIST = "jwt-refresh-token-blacklist_";
+
+    /**
+     * access_token 主动退出后加入黑名单 key
+     */
+    public static final String JWT_ACCESS_TOKEN_BLACKLIST = "jwt-access-token-blacklist_";
 }

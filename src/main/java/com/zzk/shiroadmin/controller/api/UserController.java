@@ -3,8 +3,12 @@ package com.zzk.shiroadmin.controller.api;
 import com.zzk.shiroadmin.common.annotation.LogPrint;
 import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
+import com.zzk.shiroadmin.common.constant.RedisConstants;
+import com.zzk.shiroadmin.common.exception.BusinessException;
+import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
+import com.zzk.shiroadmin.common.utils.RedisUtils;
 import com.zzk.shiroadmin.model.entity.SysUser;
 import com.zzk.shiroadmin.model.vo.req.*;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
@@ -13,6 +17,8 @@ import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
 import com.zzk.shiroadmin.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +32,16 @@ import java.util.List;
  * @author zzk
  * @create 2020-12-30 10:16
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/user")
 @Api(tags = "用户模块相关接口")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     @LogSave(title = "用户模块", action = "用户登录接口")
     @LogPrint(description = "用户登录接口")
@@ -80,6 +90,13 @@ public class UserController {
     @GetMapping("/token")
     public AjaxResponse refreshToken(HttpServletRequest request) {
         String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
+
+        //它是否过期
+        //它是否被加如了黑名
+        if (!JwtTokenUtils.validateToken(refreshToken) || redisUtils.hasKey(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken)) {
+            throw new BusinessException(BusinessExceptionType.REFRESH_TOKEN_ERROR);
+        }
+
         String newAccessToken = userService.refreshToken(refreshToken);
         return AjaxResponse.success(newAccessToken);
     }
@@ -109,4 +126,20 @@ public class UserController {
 
         return AjaxResponse.success();
     }
+
+    @LogSave(title = "用户模块", action = "用户登出接口")
+    @LogPrint(description = "用户登出接口")
+    @ApiOperation(value = "用户登出接口")
+    @GetMapping("/logout")
+    public AjaxResponse logout(HttpServletRequest request) {
+        try {
+            String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+            String refreshToken = request.getHeader(JwtConstants.REFRESH_TOKEN);
+            userService.logout(accessToken, refreshToken);
+        } catch (Exception e) {
+            log.error("logout error: {}", e.toString());
+        }
+        return AjaxResponse.success();
+    }
+
 }

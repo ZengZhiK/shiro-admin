@@ -170,6 +170,24 @@
       }
       active.tabChange(dataid.attr("data-id"));
     });
+
+    //退出登录
+    $("#logout").click(function () {
+      logoutDialog();
+    });
+
+    //删除前确认对话框
+    var logoutDialog = function () {
+      layer.open({
+        content: '确定要退出登录么？',
+        yes: function (index, layero) {
+          layer.close(index); //如果设定了yes回调，需进行手工关闭
+          CoreUtil.sendAjax("/api/user/logout", null, function (res) {
+            top.window.location.href = "/view/login";
+          }, "GET", true);
+        }
+      });
+    };
   });
 </script>
 </html>

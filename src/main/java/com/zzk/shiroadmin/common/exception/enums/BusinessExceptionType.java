@@ -34,10 +34,11 @@ public enum BusinessExceptionType {
     TOKEN_IS_NULL_ERROR(4010001, "Token为空，请登录！"),
     TOKEN_INVALID_ERROR(4010002, "Token失效，请刷新Token！"),
     REFRESH_TOKEN_ERROR(4010003, "RefreshToken过期或在黑名单！"),
-    AUTHENTICATION_ERROR(4010004, "Token有误，用户身份认证失败！"),
-    AUTHORIZATION_ERROR(4010005, "授权失败，您没有权限访问资源！"),
-    ACCOUNT_LOCKED_ERROR(4010006, "账号被锁定，请联系管理员"),
-    ACCOUNT_HAS_DELETED_ERROR(4010007, "该账号已被删除，请联系系统管理员"),
+    ACCESS_TOKEN_ERROR(4010004, "AccessToken过期或在黑名单！"),
+    AUTHENTICATION_ERROR(4010005, "Token有误，用户身份认证失败！"),
+    AUTHORIZATION_ERROR(4010006, "授权失败，您没有权限访问资源！"),
+    ACCOUNT_LOCKED_ERROR(4010007, "账号被锁定，请联系管理员"),
+    ACCOUNT_HAS_DELETED_ERROR(4010008, "该账号已被删除，请联系系统管理员"),
 
     SYSTEM_ERROR(5000000, "系统出现异常，请您稍后再试或联系管理员！"),
     PASSWORD_ENCODE_ERROR(5000001, "密码加密错误");
