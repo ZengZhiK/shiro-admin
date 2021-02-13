@@ -80,7 +80,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<MenuRespNodeVO> selectMenuForHome(String userId) {
-        return getTree(sysPermissionMapper.selectAll(), false);
+        return getTree(getPermissionsByUserId(userId), false);
     }
 
     @Override

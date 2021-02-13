@@ -88,7 +88,6 @@ public class UserServiceImpl implements UserService {
         // 生成Access Token
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtConstants.JWT_USERNAME, sysUser.getUsername());
-        // TODO: 假数据
         claims.put(JwtConstants.JWT_ROLES_INFO, getRoleByUserId(sysUser.getId()));
         claims.put(JwtConstants.JWT_PERMISSIONS_INFO, getPermissionByUserId(sysUser.getId()));
         String accessToken = JwtTokenUtils.getAccessToken(sysUser.getId(), claims);
@@ -165,9 +164,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String refreshToken(String refreshToken) {
-        // 它是否过期
-        // TODO:它是否被加如了黑名
-        if (!JwtTokenUtils.validateToken(refreshToken)) {
+        // 它是否过期，它是否被加如了黑名
+        if (!JwtTokenUtils.validateToken(refreshToken) || redisUtils.hasKey(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken)) {
             throw new BusinessException(BusinessExceptionType.REFRESH_TOKEN_ERROR);
         }
 

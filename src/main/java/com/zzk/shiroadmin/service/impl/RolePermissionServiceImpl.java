@@ -27,11 +27,11 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Override
     @Transactional
     public void addRolePermission(RolePermissionRelation vo) {
+        //删除他们关联数据
+        sysRolePermissionMapper.removePermissionsByRoleId(vo.getRoleId());
         if (vo.getPermissionIds() == null || vo.getPermissionIds().isEmpty()) {
             return;
         }
-
-        sysRolePermissionMapper.removePermissionsByRoleId(vo.getRoleId());
 
         List<SysRolePermission> rolePermissionList = new ArrayList<>();
         for (String permissionId : vo.getPermissionIds()) {

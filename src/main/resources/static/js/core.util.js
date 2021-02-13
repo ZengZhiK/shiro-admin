@@ -29,13 +29,11 @@ var CoreUtil = (function () {
             if (ft != null && ft != undefined) {
               ft(res);
             }
-          }
-          else if (res.code == 4010001 || res.code == 4010002 || res.code == 4010003) {
+          } else if (res.code == 4010001 || res.code == 4010002 || res.code == 4010003) {
             //凭证过期重新登录
             layer.msg("凭证过期请重新登录")
             top.window.location.href = "/view/login"
-          }
-          else if (res.code == 4010004) {
+          } else if (res.code == 4010004) {
             // 根据后端提示刷新token，记录要重复刷新的参数
             var reUrl = url;
             var reParams = params;
@@ -49,22 +47,21 @@ var CoreUtil = (function () {
             CoreUtil.sendAjax("/api/user/token", null, function (res) {
               if (res.code == 200) {
                 CoreUtil.setData("access_token", res.data);
-                setTimeout(function () {
-                  /*刷新成功后继续重复请求*/
-                  CoreUtil.sendAjax(reUrl, reParams, reFt, reMethod, reHeaders, reNoAuthorityFt, reContentType, reAsync);
-                }, 1000);
+                top.window.location.href = "/view/home";
+                // setTimeout(function () {
+                //   /*刷新成功后继续重复请求*/
+                //   CoreUtil.sendAjax(reUrl, reParams, reFt, reMethod, reHeaders, reNoAuthorityFt, reContentType, reAsync);
+                // }, 1000);
               } else {
                 layer.msg("凭证过期请重新登录");
                 top.window.location.href = "/view/login"
               }
             }, "GET", true)
-          }
-          else if (res.code == 4030001) {
+          } else if (res.code == 4030001) {
             if (ft != null && ft != undefined) {
               noAuthorityFt(res);
             }
-          }
-          else {
+          } else {
             layer.msg(res.msg)
           }
         }
