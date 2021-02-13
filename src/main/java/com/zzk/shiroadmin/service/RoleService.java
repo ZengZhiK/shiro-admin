@@ -59,4 +59,11 @@ public interface RoleService {
      * @param id
      */
     void deleteRole(String id);
+
+    /**
+     * 根据userId查询管理的角色name
+     * @param userId
+     * @return
+     */
+    List<String> getRoleNameByUserId(String userId);
 }

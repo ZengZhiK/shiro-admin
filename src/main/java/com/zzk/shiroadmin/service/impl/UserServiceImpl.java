@@ -16,6 +16,7 @@ import com.zzk.shiroadmin.model.vo.req.*;
 import com.zzk.shiroadmin.model.vo.resp.LoginRespVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.model.vo.resp.UserRoleRespVO;
+import com.zzk.shiroadmin.service.PermissionService;
 import com.zzk.shiroadmin.service.RoleService;
 import com.zzk.shiroadmin.service.UserRoleService;
 import com.zzk.shiroadmin.service.UserService;
@@ -48,6 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -85,8 +89,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtConstants.JWT_USERNAME, sysUser.getUsername());
         // TODO: 假数据
-        claims.put(JwtConstants.JWT_ROLES_INFO, getRoleByUserId(sysUser.getUsername()));
-        claims.put(JwtConstants.JWT_PERMISSIONS_INFO, getPermissionByUserId(sysUser.getUsername()));
+        claims.put(JwtConstants.JWT_ROLES_INFO, getRoleByUserId(sysUser.getId()));
+        claims.put(JwtConstants.JWT_PERMISSIONS_INFO, getPermissionByUserId(sysUser.getId()));
         String accessToken = JwtTokenUtils.getAccessToken(sysUser.getId(), claims);
 
         // 生成Refresh Token
@@ -301,28 +305,11 @@ public class UserServiceImpl implements UserService {
         redisUtils.set(RedisConstants.JWT_REFRESH_TOKEN_BLACKLIST + refreshToken, userId, JwtTokenUtils.getRemainingTime(refreshToken), TimeUnit.MILLISECONDS);
     }
 
-    private List<String> getRoleByUserId(String userName) {
-        List<String> list = new ArrayList<>();
-        if (userName.equals("admin")) {
-            list.add("admin");
-        } else {
-            list.add("dev");
-        }
-        return list;
+    private List<String> getRoleByUserId(String userId) {
+        return roleService.getRoleNameByUserId(userId);
     }
 
-    private List<String> getPermissionByUserId(String userName) {
-        List<String> list = new ArrayList<>();
-        if (userName.equals("admin")) {
-            list.add("sys:user:add");
-            list.add("sys:user:update");
-//            list.add("sys:user:delete");
-            list.add("sys:user:list");
-            list.add("sys:role:list");
-        } else {
-//            list.add("sys:user:list");
-//            list.add("sys:user:add");
-        }
-        return list;
+    private List<String> getPermissionByUserId(String userId) {
+        return permissionService.getPermissionsStrByUserId(userId);
     }
 }

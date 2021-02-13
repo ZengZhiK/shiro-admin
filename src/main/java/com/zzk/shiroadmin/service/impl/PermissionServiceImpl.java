@@ -160,6 +160,34 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
+    @Override
+    public List<String> getPermissionsStrByUserId(String userId) {
+        List<SysPermission> permissions = getPermissionsByUserId(userId);
+        if (permissions == null || permissions.isEmpty()) {
+            return null;
+        }
+        List<String> result = new ArrayList<>();
+        for (SysPermission s : permissions) {
+            if (!StringUtils.isEmpty(s.getPerms())) {
+                result.add(s.getPerms());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<SysPermission> getPermissionsByUserId(String userId) {
+        List<String> roleIds = userRoleService.getRoleIdsByUserId(userId);
+        if (roleIds.isEmpty()) {
+            return null;
+        }
+        List<String> permissionIds = rolePermissionService.getPermissionIdsByRoleIds(roleIds);
+        if (permissionIds.isEmpty()) {
+            return null;
+        }
+        return sysPermissionMapper.selectByIds(permissionIds);
+    }
+
     /**
      * 递归生成菜单权限树
      *

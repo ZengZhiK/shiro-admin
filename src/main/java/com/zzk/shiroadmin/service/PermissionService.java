@@ -64,4 +64,20 @@ public interface PermissionService {
      * @param id
      */
     void deletedPermission(String id);
+
+    /**
+     * 根据userId查询关联的权限
+     *
+     * @param userId
+     * @return
+     */
+    List<String> getPermissionsStrByUserId(String userId);
+
+    /**
+     * 根据userId查询关联的权限
+     *
+     * @param userId
+     * @return
+     */
+    List<SysPermission> getPermissionsByUserId(String userId);
 }

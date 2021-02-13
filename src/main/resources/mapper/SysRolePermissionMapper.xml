@@ -121,4 +121,13 @@
     from sys_role_permission
     where role_id = #{roleId}
   </select>
+  <!-- 通过用id集合查找到关联的权限id集合 -->
+  <select id="getPermissionIdsByRoleIds" resultType="java.lang.String">
+    select permission_id
+    from sys_role_permission
+    where role_id in
+    <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
 </mapper>

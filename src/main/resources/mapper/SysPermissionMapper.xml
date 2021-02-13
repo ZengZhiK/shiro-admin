@@ -193,11 +193,22 @@
         where deleted = 1
     </select>
     <!-- 查询该权限的子集权限 -->
-    <!-- 小霍 -->
     <select id="selectChild" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
         from sys_permission
         where pid = #{parentId} and deleted=1
+    </select>
+    <!-- 通过id集合获取信息 -->
+    <select id="selectByIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from sys_permission
+        where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and deleted=1
+        and `status`=1
+        order by order_num desc
     </select>
 </mapper>

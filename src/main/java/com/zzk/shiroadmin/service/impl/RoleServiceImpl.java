@@ -168,6 +168,16 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Override
+    public List<String> getRoleNameByUserId(String userId) {
+        List<String> roleIds = userRoleService.getRoleIdsByUserId(userId);
+        if (roleIds.isEmpty()) {
+            return null;
+        }
+
+        return sysRoleMapper.selectNamesByIds(roleIds);
+    }
+
     private void setChecked(List<MenuRespNodeVO> menuTree, Set<String> checkList) {
 
         for (MenuRespNodeVO node : menuTree) {

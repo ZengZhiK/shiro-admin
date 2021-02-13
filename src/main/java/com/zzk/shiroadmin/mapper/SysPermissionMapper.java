@@ -20,4 +20,6 @@ public interface SysPermissionMapper {
     List<SysPermission> selectAll();
 
     List<SysPermission> selectChild(String parentId);
+
+    List<SysPermission> selectByIds(List<String> ids);
 }

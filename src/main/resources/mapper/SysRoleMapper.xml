@@ -138,4 +138,14 @@
             </if>
         </where>
     </select>
+  <!-- 通过id集合获取名称集合 -->
+  <select id="selectNamesByIds" resultType="java.lang.String">
+    select name
+    from sys_role
+    where id in
+    <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    and deleted = 1
+  </select>
 </mapper>
