@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
   <title>部门管理-ShiroAdmin</title>
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
@@ -53,7 +53,7 @@
   </div>
 </div>
 <!-- 部门表格 -->
-<div class="dept-table">
+<div class="dept-table" shiro:hasPermission="sys:dept:list">
   <table class="layui-table" id="deptTable" lay-filter="deptTable"></table>
 </div>
 <!-- 部门树 -->
@@ -61,7 +61,7 @@
 </body>
 <!-- 部门新增按钮：点击打开部门新增表单 -->
 <script type="text/html" id="toolbar">
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:dept:add">
     <button type="button" class="layui-btn" lay-event="addDept">
       <i class="layui-icon">&#xe608;</i> 添加
     </button>
@@ -69,8 +69,8 @@
 </script>
 <!-- 编辑部门、删除部门按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" shiro:hasPermission="sys:dept:update">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:dept:update">删除</a>
 </script>
 <script>
   layui.config({
@@ -92,7 +92,12 @@
     var loadDeptTreeTable = function () {
       CoreUtil.sendAjax("/api/dept", null, function (res) {
         renderTable(res.data);
-      }, "GET", false);
+      }, "GET", false, function (res) {
+        //无权限访问部门限列表提示
+        layer.msg("抱歉！您暂无获取部门列表的权限");
+        var noAuthorityData = [];
+        renderTable(noAuthorityData);
+      });
     }
 
     /*获取所有的部门数据*/
@@ -157,7 +162,12 @@
       var param = {deptId: id}
       CoreUtil.sendAjax("/api/dept/tree", param, function (res) {
         loadDeptTree(res.data);
-      }, "GET", false);
+      }, "GET", false, function (res) {
+        //无条件获取部门树提示
+        layer.msg("抱歉！您暂无获取部门树的权限");
+        var noAuthorityData = [];
+        loadDeptTree(noAuthorityData);
+      });
     };
 
     //加载部门树数据
@@ -252,7 +262,10 @@
           $(".dept-table").show();
           //隐藏编辑窗口
           $(".operation_dept").hide();
-        }, "POST", false);
+        }, "POST", false, function (res) {
+          //无权限新增部门提示
+          layer.msg("抱歉！您暂无新增部门的权限");
+        });
       } else {
         CoreUtil.sendAjax("/api/dept/update", JSON.stringify(data.field), function (res) {
           loadDeptTreeTable();

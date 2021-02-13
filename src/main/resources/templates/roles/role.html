@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
   <title>角色管理-ShiroAdmin</title>
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
@@ -49,7 +49,7 @@
 </div>
 <!-- 角色表格 -->
 <div class="role_table_div">
-  <div id="searchParam">
+  <div id="searchParam" shiro:hasPermission="sys:role:list">
     <div class="layui-form-item">
       <div class="layui-input-inline">
         <input type="text" id="roleId" class="layui-input" autocomplete="off" placeholder="请输入角色ID">
@@ -71,7 +71,6 @@
         <button class="layui-btn" id="search">查询</button>
       </div>
     </div>
-
   </div>
   <table class="layui-hide" id="role_table" lay-filter="role_table"></table>
   <div id="laypage" class="layui-laypage-btn"></div>
@@ -79,7 +78,7 @@
 </body>
 <!-- 角色新增按钮：点击打开角色新增表单 -->
 <script type="text/html" id="toolbar">
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:role:add">
     <button type="button" class="layui-btn" lay-event="addNewRole">
       <i class="layui-icon">&#xe608;</i> 新增角色
     </button>
@@ -87,8 +86,8 @@
 </script>
 <!-- 编辑角色、删除角色按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" shiro:hasPermission="sys:role:update">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:role:delete">删除</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree'], function () {
@@ -119,7 +118,12 @@
       if (res.data.list != null) {
         loadTable(res.data.list);
       }
-    }, "POST", false);
+    }, "POST", false, false, function (res) {
+      //无权限访问角色列表提示
+      layer.msg("抱歉！您暂无获取角色列表的权限");
+      var noAuthorityData = [];
+      loadTable(noAuthorityData);
+    });
 
     //渲染分页插件
     var laypageTable = function (count, currentPage) {
@@ -139,7 +143,12 @@
                 loadTable(res.data.list);
                 laypageTable(res.data.totalRows, searchParam.pageNum);
               }
-            }, "POST", false);
+            }, "POST", false, false, function (res) {
+              //无权限访问角色列表提示
+              layer.msg("抱歉！您暂无获取角色列表的权限");
+              var noAuthorityData = [];
+              loadTable(noAuthorityData);
+            });
           }
         }
       });
@@ -193,7 +202,12 @@
     var initTree = function () {
       CoreUtil.sendAjax("/api/permission/tree/all", null, function (res) {
         loadPermissionTree(res.data);
-      }, "GET", false)
+      }, "GET", false, function (res) {
+        //无权限访问菜单权限树提示
+        layer.msg("抱歉！您暂无获取菜单权限输列表的权限");
+        var noAuthorityData = [];
+        loadPermissionTree(noAuthorityData);
+      })
     };
 
     //加载权限树数据
@@ -271,7 +285,10 @@
           //隐藏编辑窗口
           $(".operation_role").hide();
           $(".layui-laypage-btn").click();
-        }, "POST", false);
+        }, "POST", false, function (res) {
+          //无权限新增角色提示
+          layer.msg("抱歉！您暂无新增角色信息详情的权限");
+        });
       } else {
         CoreUtil.sendAjax("/api/role/update", JSON.stringify(params), function (res) {
           //显示表格
@@ -330,7 +347,12 @@
         if (res.data.list != null) {
           loadTable(res.data.list);
         }
-      }, "POST", false);
+      }, "POST", false, function (res) {
+        //无权限访问角色列表提示
+        layer.msg("抱歉！您暂无获取角色列表的权限");
+        var noAuthorityData = [];
+        loadTable(noAuthorityData);
+      });
     });
 
     //操作项事件
@@ -373,7 +395,10 @@
         }
         loadPermissionTree(res.data.menuTree);
         form.render(); //更新全部
-      }, "GET", false);
+      }, "GET", false, function (res) {
+        //无权限访问角色详情提示
+        layer.msg("抱歉！您暂无获取角色信息详情的权限");
+      });
     }
 
     //删除前确认对话框

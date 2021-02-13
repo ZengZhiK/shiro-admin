@@ -1,5 +1,6 @@
 package com.zzk.shiroadmin.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.zzk.shiroadmin.shiro.CustomAccessControlFilter;
 import com.zzk.shiroadmin.shiro.CustomHashedCredentialsMatcher;
 import com.zzk.shiroadmin.shiro.CustomRealm;
@@ -92,5 +93,15 @@ public class ShiroConfig {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
+    }
+
+    /**
+     * html页面支持shiro标签
+     *
+     * @return
+     */
+    @Bean
+    public ShiroDialect shiroDialect() {
+        return new ShiroDialect();
     }
 }

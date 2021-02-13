@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
   <title>菜单权限管理-ShiroAdmin</title>
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
@@ -83,7 +83,7 @@
   </div>
 </div>
 <!-- 菜单表格：按树形结构显示 -->
-<div class="menu-table">
+<div class="menu-table" shiro:hasPermission="sys:permission:list">
   <table class="layui-table" id="menuTable" lay-filter="menuTable"></table>
 </div>
 <!-- 菜单树：目录 > 菜单 -->
@@ -91,7 +91,7 @@
 </body>
 <!-- 菜单新增按钮：点击打开菜单新增表单 -->
 <script type="text/html" id="toolbar">
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:permission:add">
     <button type="button" class="layui-btn" lay-event="addMenu">
       <i class="layui-icon">&#xe608;</i> 添加
     </button>
@@ -99,8 +99,8 @@
 </script>
 <!-- 编辑权限、删除权限按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" shiro:hasPermission="sys:permission:update">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:permission:delete">删除</a>
 </script>
 <script>
   layui.config({
@@ -131,7 +131,12 @@
     var reloadTreeTable = function () {
       CoreUtil.sendAjax("/api/permission", null, function (res) {
         renderTable(res.data);
-      }, "GET", false);
+      }, "GET", false, function (res) {
+        //无权限访问菜单权限列表提示
+        layer.msg("抱歉！您暂无获取菜单权限列表的权限");
+        var noAuthorityData = [];
+        renderTable(noAuthorityData);
+      });
     }
 
     /*获取所有的菜单权限数据*/
@@ -199,7 +204,12 @@
     var initTree = function () {
       CoreUtil.sendAjax("/api/permission/tree", null, function (res) {
         loadPermissionTree(res.data);
-      }, "GET", false);
+      }, "GET", false, function (res) {
+        //无权限获取菜单权限树提示
+        layer.msg("抱歉！您暂无获取菜单权限树的权限");
+        var noAuthorityData = [];
+        loadPermissionTree(noAuthorityData);
+      });
     };
 
     //加载菜单权限数据
@@ -324,7 +334,10 @@
           $(".menu-table").show();
           //显示编辑窗口
           $(".operation_menu").hide();
-        }, "POST", false);
+        }, "POST", false, function (res) {
+          //无新增菜单权限数据提示
+          layer.msg("抱歉！您暂无新增菜单权限的权限");
+        });
       } else {
         CoreUtil.sendAjax("/api/permission/update", JSON.stringify(data.field), function (res) {
           reloadTreeTable();
@@ -332,7 +345,10 @@
           $(".menu-table").show();
           //隐藏编辑窗口
           $(".operation_menu").hide();
-        }, "PUT", false);
+        }, "PUT", false, function (res) {
+          //无更新菜单权限数据提示
+          layer.msg("抱歉！您暂无编辑菜单权限的权限");
+        });
       }
 
       return false;
@@ -391,7 +407,10 @@
           CoreUtil.sendAjax("/api/permission/delete/" + menuId, null, function (res) {
             layer.msg(res.msg);
             reloadTreeTable();
-          }, "DELETE", false);
+          }, "DELETE", false, function (res) {
+            //无权限删除菜单权限提示
+            layer.msg("抱歉！您暂无删除菜单权限的权限");
+          });
         }
       });
     };

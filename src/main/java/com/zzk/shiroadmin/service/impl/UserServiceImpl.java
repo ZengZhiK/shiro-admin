@@ -316,11 +316,11 @@ public class UserServiceImpl implements UserService {
         if (userName.equals("admin")) {
             list.add("sys:user:add");
             list.add("sys:user:update");
-            list.add("sys:user:delete");
+//            list.add("sys:user:delete");
             list.add("sys:user:list");
         } else {
-//            list.add("sys:user:list");
-            list.add("sys:user:add");
+            list.add("sys:user:list");
+//            list.add("sys:user:add");
         }
         return list;
     }

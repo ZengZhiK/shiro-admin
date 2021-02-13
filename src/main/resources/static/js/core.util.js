@@ -30,12 +30,12 @@ var CoreUtil = (function () {
               ft(res);
             }
           }
-          else if (res.code == 4010001 || res.code == 4010003 || res.code == 4010004) {
+          else if (res.code == 4010001 || res.code == 4010002 || res.code == 4010003) {
             //凭证过期重新登录
             layer.msg("凭证过期请重新登录")
             top.window.location.href = "/view/login"
           }
-          else if (res.code == 4010002) {
+          else if (res.code == 4010004) {
             // 根据后端提示刷新token，记录要重复刷新的参数
             var reUrl = url;
             var reParams = params;

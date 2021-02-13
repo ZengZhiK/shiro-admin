@@ -18,6 +18,7 @@ import com.zzk.shiroadmin.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,7 @@ public class UserController {
     @LogPrint(description = "用户数据分页获取接口")
     @ApiOperation(value = "用户数据分页获取接口")
     @PostMapping
+    @RequiresPermissions("sys:user:list")
     public PageVO<SysUser> userPageInfo(@RequestBody @Valid UserPageReqVO vo) {
         return userService.pageInfo(vo);
     }
@@ -63,6 +65,7 @@ public class UserController {
     @LogPrint(description = "新增用户接口")
     @ApiOperation(value = "新增用户接口")
     @PostMapping("/add")
+    @RequiresPermissions("sys:user:add")
     public SysUser addUser(@RequestBody @Valid UserAddReqVO vo) {
         return userService.addUser(vo);
     }
@@ -79,6 +82,7 @@ public class UserController {
     @LogPrint(description = "保存用户角色接口")
     @ApiOperation(value = "保存用户角色接口")
     @PutMapping("/roles")
+    @RequiresPermissions("sys:user:role:update")
     public AjaxResponse saveUserOwnRole(@RequestBody @Valid UserOwnRoleReqVO vo) {
         userService.setUserOwnRole(vo);
         return AjaxResponse.success();
@@ -105,6 +109,7 @@ public class UserController {
     @LogPrint(description = "修改用户信息接口")
     @ApiOperation(value = "修改用户信息接口")
     @PutMapping("/update")
+    @RequiresPermissions("sys:user:update")
     public AjaxResponse updateUser(@RequestBody @Valid UserUpdateReqVO vo, HttpServletRequest request) {
         String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
         String operationId = JwtTokenUtils.getUserId(accessToken);
@@ -118,6 +123,7 @@ public class UserController {
     @LogPrint(description = "批量删除用户信息接口")
     @ApiOperation(value = "批量删除用户信息接口")
     @DeleteMapping("/delete")
+    @RequiresPermissions("sys:user:delete")
     public AjaxResponse deleteUser(@RequestBody List<String> userIds, HttpServletRequest request) {
         String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
         String operationId = JwtTokenUtils.getUserId(accessToken);

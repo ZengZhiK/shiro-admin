@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:replace="_fragments :: head(~{::title}, ~{}, ~{})">
   <title>日志管理-ShiroAdmin</title>
 </head>
 <body>
-<div id="searchParam">
+<!-- 日志表格 -->
+<div id="searchParam" shiro:hasPermission="sys:log:list">
   <div class="layui-form-item">
     <div class="layui-input-inline">
       <input type="text" id="userId" class="layui-input" autocomplete="off" placeholder="用户ID">
@@ -23,12 +24,12 @@
     </div>
   </div>
 </div>
-<table class="layui-hide" id="log_table" lay-filter="log_table"></table>
+<table class="layui-hide" id="log_table" lay-filter="log_table" shiro:hasPermission="sys:log:list"></table>
 <div id="laypage" class="layui-laypage-btn"></div>
 </body>
 <!-- 日志批量删除按钮 -->
 <script type="text/html" id="toolbar">
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:log:delete">
     <button type="button" class="layui-btn layui-btn-danger" lay-event="batchDelLog">
       <i class="layui-icon">&#xe608;</i> 批量删除
     </button>
@@ -36,7 +37,7 @@
 </script>
 <!-- 日志删除按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delLog">删除</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delLog" shiro:hasPermission="sys:log:delete">删除</a>
 </script>
 <script>
   layui.use(['table', 'laypage', 'layer', 'laydate', 'jquery'], function () {
@@ -64,7 +65,12 @@
       if (res.data.list != null) {
         loadTable(res.data.list);
       }
-    }, "POST", false);
+    }, "POST", false, function (res) {
+      //无权限访问操作日志列表提示
+      layer.msg("抱歉！您暂无获取操作日志列表的权限");
+      var noAuthorityData = [];
+      loadTable(noAuthorityData);
+    });
 
     //渲染分页插件
     var laypageTable = function (count, currentPage) {
@@ -84,7 +90,12 @@
                 loadTable(res.data.list);
                 laypageTable(res.data.totalRows, searchParam.pageNum);
               }
-            }, "POST", false);
+            }, "POST", false, function (res) {
+              //无权限访问操作日志列表提示
+              layer.msg("抱歉！您暂无获取操作日志列表的权限");
+              var noAuthorityData = [];
+              loadTable(noAuthorityData);
+            });
           }
         }
       });
@@ -133,7 +144,12 @@
         if (res.data.list != null) {
           loadTable(res.data.list);
         }
-      }, "POST", false);
+      }, "POST", false, function (res) {
+        //无权限访问操作日志列表提示
+        layer.msg("抱歉！您暂无获取操作日志列表的权限");
+        var noAuthorityData = [];
+        loadTable(noAuthorityData);
+      });
     });
 
     //日期范围
@@ -194,7 +210,10 @@
           CoreUtil.sendAjax("/api/log/delete", JSON.stringify(logIds), function (res) {
             layer.msg(res.msg);
             $(".layui-laypage-btn").click();
-          }, "DELETE", false);
+          }, "DELETE", false, function (res) {
+            //无权限删除操作日志提示
+            layer.msg("抱歉！您暂无删除操作日志的权限");
+          });
         }
       });
     }

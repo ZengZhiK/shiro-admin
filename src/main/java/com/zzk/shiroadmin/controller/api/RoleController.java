@@ -13,6 +13,7 @@ import com.zzk.shiroadmin.service.PermissionService;
 import com.zzk.shiroadmin.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class RoleController {
     @LogPrint(description = "角色数据分页获取接口")
     @ApiOperation(value = "角色数据分页获取接口")
     @PostMapping
+    @RequiresPermissions("sys:role:list")
     public PageVO<SysRole> rolePageInfo(@RequestBody @Valid RolePageReqVO vo) {
         return roleService.pageInfo(vo);
     }
@@ -44,6 +46,7 @@ public class RoleController {
     @LogPrint(description = "新增角色接口")
     @ApiOperation(value = "新增角色接口")
     @PostMapping("/add")
+    @RequiresPermissions("sys:role:add")
     public SysRole addRole(@RequestBody @Valid RoleAddReqVO vo) {
         return roleService.addRole(vo);
     }
@@ -52,6 +55,7 @@ public class RoleController {
     @LogPrint(description = "角色详情获取接口")
     @ApiOperation(value = "角色接详情获取口")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:role:detail")
     public SysRole detailInfo(@PathVariable("id") String id) {
         return roleService.detailInfo(id);
     }
@@ -60,6 +64,7 @@ public class RoleController {
     @LogPrint(description = "角色信息更新接口")
     @ApiOperation(value = "角色信息更新接口")
     @PutMapping("/update")
+    @RequiresPermissions("sys:role:update")
     public AjaxResponse updateRole(@RequestBody @Valid RoleUpdateReqVO vo) {
         roleService.updateRole(vo);
         return AjaxResponse.success();
@@ -69,6 +74,7 @@ public class RoleController {
     @LogPrint(description = "角色信息删除接口")
     @ApiOperation(value = "角色信息删除接口")
     @DeleteMapping("/delete/{id}")
+    @RequiresPermissions("sys:role:delete")
     public AjaxResponse deleteRole(@PathVariable("id") String id) {
         roleService.deleteRole(id);
         return AjaxResponse.success();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
   <title>用户管理-ShiroAdmin</title>
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
@@ -54,7 +54,7 @@
 </div>
 <!-- 用户表格 -->
 <div class="user_table_div">
-  <div id="searchParam">
+  <div id="searchParam" shiro:hasPermission="sys:user:list">
     <div class="layui-form-item">
       <div class="layui-input-inline">
         <input type="text" id="userId" class="layui-input" autocomplete="off" placeholder="请输入用户ID">
@@ -90,12 +90,12 @@
 </body>
 <!-- 用户新增按钮：点击打开用户新增表单 -->
 <script type="text/html" id="toolbar">
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:user:add">
     <button type="button" class="layui-btn" lay-event="addNewUser">
       <i class="layui-icon">&#xe608;</i> 新增用户
     </button>
   </div>
-  <div class="layui-btn-group">
+  <div class="layui-btn-group" shiro:hasPermission="sys:user:delete">
     <button type="button" class="layui-btn layui-btn-danger" lay-event="batchDeleted">
       <i class="layui-icon">&#xe608;</i> 批量删除
     </button>
@@ -103,9 +103,9 @@
 </script>
 <!-- 赋予角色、编辑用户、删除用户按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-xs" lay-event="operationRole">赋予角色</a>
-  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a class="layui-btn layui-btn-xs" lay-event="operationRole" shiro:hasPermission="sys:user:role:update">赋予角色</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" shiro:hasPermission="sys:user:update">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:user:delete">删除</a>
 </script>
 <script>
   layui.use(['jquery', 'form', 'table', 'laypage', 'layer', 'laydate', 'tree', 'transfer'], function () {
@@ -141,7 +141,12 @@
       if (res.data.list != null) {
         loadTable(res.data.list);
       }
-    }, "POST", false);
+    }, "POST", false, function (res) {
+      //用户列表接口无权限回调
+      layer.msg("抱歉！您暂无获取用户列表的权限");
+      var noAuthorityData = [];
+      loadTable(noAuthorityData);
+    });
 
     //渲染分页插件
     var laypageTable = function (count, currentPage) {
@@ -161,7 +166,12 @@
                 loadTable(res.data.list);
                 laypageTable(res.data.totalRows, searchParam.pageNum);
               }
-            }, "POST", false);
+            }, "POST", false, function (res) {
+              //用户列表接口无权限回调
+              layer.msg("抱歉！您暂无获取用户列表的权限");
+              var noAuthorityData = [];
+              loadTable(noAuthorityData);
+            });
           }
         }
       });
@@ -293,7 +303,12 @@
     var initTree = function () {
       CoreUtil.sendAjax("/api/dept/tree", null, function (res) {
         loadDeptTree(res.data);
-      }, "GET", false)
+      }, "GET", false, function (res) {
+        //部门树列表无权限提示
+        layer.msg("抱歉！您暂无获取部门树的权限");
+        var noAuthorityData = [];
+        loadDeptTree(noAuthorityData);
+      })
     };
 
     //加载部门树数据
@@ -343,7 +358,10 @@
           //隐藏编辑窗口
           $(".operation_user").hide();
           $(".layui-laypage-btn").click();
-        }, "POST", false);
+        }, "POST", false, function (res) {
+          //新增用户无权限提示
+          layer.msg("抱歉！您暂无新增用户的权限");
+        });
       } else {
         CoreUtil.sendAjax("/api/user/update", JSON.stringify(data.field), function (res) {
           //显示表格
@@ -351,7 +369,10 @@
           //隐藏编辑窗口
           $(".operation_user").hide();
           $(".layui-laypage-btn").click();
-        }, "PUT", false);
+        }, "PUT", false, function (res) {
+          //更新用户无权限提示
+          layer.msg("抱歉！您暂无编辑用户的权限");
+        });
       }
       return false;
     });
@@ -388,7 +409,12 @@
         if (res.data.list != null) {
           loadTable(res.data.list);
         }
-      }, "POST", false);
+      }, "POST", false, function (res) {
+        //用户列表接口无权限回调
+        layer.msg("抱歉！您暂无获取用户列表的权限");
+        var noAuthorityData = [];
+        loadTable(noAuthorityData);
+      });
     });
 
     //操作工具栏事件
@@ -412,7 +438,6 @@
                 //获得右侧数据
                 var roleIds = [];
                 var getData = transfer.getData('ownData');
-                // layer.msg(JSON.stringify(getData));
                 if (getData.length != 0) {
                   $(getData).each(function (index, item) {
                     roleIds.push(item.value);
@@ -499,7 +524,10 @@
           CoreUtil.sendAjax("/api/user/delete", JSON.stringify(userIds), function (res) {
             layer.msg(res.msg);
             $(".layui-laypage-btn").click();
-          }, "DELETE", false);
+          }, "DELETE", false, function (res) {
+            //删除用户无权限
+            layer.msg("抱歉！您暂无删除用户的权限");
+          });
         }
       });
     };
