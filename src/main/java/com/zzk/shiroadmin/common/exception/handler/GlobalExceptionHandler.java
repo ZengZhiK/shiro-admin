@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
     /**
      * 处理程序中未能捕获（遗漏的）异常
      */
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler(Exception.class)
     public AjaxResponse handleException(Throwable e) {
         log.error("系统发生未知异常: {}", e.toString());
         return AjaxResponse.error(new BusinessException(BusinessExceptionType.SYSTEM_ERROR));

@@ -48,7 +48,7 @@ public class LogPrintAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // 获取 @WebLog 注解的描述信息
+        // 获取 @LogPrint 注解的描述信息
         String methodDescription = getAspectLogDescription(joinPoint);
 
         // 打印请求相关参数
@@ -126,7 +126,7 @@ public class LogPrintAspect {
      * @return 参数信息
      */
     private String getParams(JoinPoint joinPoint) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         if (joinPoint.getArgs() != null && joinPoint.getArgs().length > 0) {
             for (int i = 0; i < joinPoint.getArgs().length; i++) {
                 Object arg = joinPoint.getArgs()[i];
@@ -135,12 +135,12 @@ public class LogPrintAspect {
                     continue;
                 }
                 try {
-                    params += JSONObject.toJSONString(joinPoint.getArgs()[i]);
+                    params.append(JSONObject.toJSONString(joinPoint.getArgs()[i]));
                 } catch (Exception e1) {
                     log.error(e1.getMessage());
                 }
             }
         }
-        return params;
+        return params.toString();
     }
 }
