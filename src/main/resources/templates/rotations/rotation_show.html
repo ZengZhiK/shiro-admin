@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="_fragments :: head(~{::title}, ~{}, ~{::style})">
+  <title>轮播图展示-ShiroAdmin</title>
+  <style type="text/css">
+    div {
+      position: relative;
+      overflow: hidden;
+    }
+
+    div img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+<div class="layui-carousel" id="rotationView">
+  <div carousel-item="" id="carousel-item">
+  </div>
+</div>
+</body>
+<script>
+  layui.use(['carousel', 'jquery', 'layer'], function () {
+    var carousel = layui.carousel;
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    CoreUtil.sendAjax("/api/rotation", null, function (res) {
+      var data = res.data;
+      var carouselHtml = "";
+      if (data != undefined && data.length > 0) {
+        $.each(data, function (index, item) {
+          carouselHtml += '<div>';
+          carouselHtml += '<a href="' + item.url + '" target="_blank">';
+          carouselHtml += '<img src="' + item.fileUrl + '">';
+          carouselHtml += '</img></a></div>';
+        });
+        $("#carousel-item").html(carouselHtml);
+
+      }
+      //图片轮播
+      carousel.render({
+        elem: '#rotationView'
+        , width: '100%'
+        , height: '440px'
+        , interval: 3000
+      });
+    }, "GET", false);
+  })
+</script>
+</html>

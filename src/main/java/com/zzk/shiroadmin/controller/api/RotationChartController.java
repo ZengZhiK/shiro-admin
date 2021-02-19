@@ -34,6 +34,13 @@ public class RotationChartController {
     @Autowired
     private RotationChartService rotationChartService;
 
+    @LogPrint(description = "轮播图展示接口")
+    @ApiOperation(value = "轮播图展示接口")
+    @GetMapping
+    public List<SysRotationChart> getRotations() {
+        return rotationChartService.selectAll();
+    }
+
     @LogPrint(description = "轮播图数据分页获取接口")
     @ApiOperation(value = "轮播图数据分页获取接口")
     @PostMapping

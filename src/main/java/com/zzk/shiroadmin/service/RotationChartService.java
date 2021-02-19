@@ -46,4 +46,11 @@ public interface RotationChartService {
      * @param vos
      */
     void deletedRotation(List<RotationChartDeleteReqVO> vos);
+
+    /**
+     * 获取所有轮播图
+     *
+     * @return
+     */
+    List<SysRotationChart> selectAll();
 }

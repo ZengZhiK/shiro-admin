@@ -90,4 +90,9 @@ public class RotationChartServiceImpl implements RotationChartService {
             fileService.deleteByFileUrl(vo.getFileUrl());
         }
     }
+
+    @Override
+    public List<SysRotationChart> selectAll() {
+        return sysRotationChartMapper.selectAll();
+    }
 }

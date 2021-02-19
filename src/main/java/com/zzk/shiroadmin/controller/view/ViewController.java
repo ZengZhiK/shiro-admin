@@ -124,4 +124,14 @@ public class ViewController {
     public String rotations() {
         return "rotations/rotation";
     }
+
+    /**
+     * 跳转至轮播图前台展示页面
+     *
+     * @return
+     */
+    @GetMapping("/rotations/show")
+    public String rotationShow() {
+        return "rotations/rotation_show";
+    }
 }
