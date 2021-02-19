@@ -55,9 +55,9 @@ public class FileController {
 
     @LogSave(title = "文件模块", action = "文件下载接口")
     @LogPrint(description = "文件下载接口")
-    @PostMapping("/download'")
+    @GetMapping("/download/{fileId}")
     @ApiOperation(value = "文件下载接口")
-    public void download(@RequestParam("fileId") String fileId, HttpServletResponse response) {
+    public void download(@PathVariable("fileId") String fileId, HttpServletResponse response) {
         fileService.download(fileId, response);
     }
 }

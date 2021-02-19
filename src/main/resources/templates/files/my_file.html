@@ -12,7 +12,7 @@
 </body>
 <!-- 文件下载按钮 -->
 <script type="text/html" id="tool">
-  <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="download">下载</a>
 </script>
 <script>
   layui.use(['table', 'laypage', 'jquery', 'layer'], function () {
@@ -104,40 +104,40 @@
       var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
       switch (layEvent) {
         case 'download':
-          // window.location.href="/api/file/"+data.id;
-          // 获取XMLHttpRequest
-          var xmlResquest = new XMLHttpRequest();
-          //  发起请求
-          xmlResquest.open("GET", "/api/file/" + data.id, true);
-          xmlResquest.setRequestHeader("authorization", CoreUtil.getData("access_token"));
-          xmlResquest.responseType = "blob";
-          //  返回
-          xmlResquest.onload = function (oEvent) {
-            // alert(this.status);
-            if (this.status == 200) {
-              var content = xmlResquest.response;
-              // 组装a标签
-              var elink = document.createElement("a");
-              //设置文件下载路径
-              elink.download = data.fileName;
-              elink.style.display = "none";
-              //把后端response响应二进制文件放到blob
-              var blob = new Blob([content]);
-              //解决下载不存在文件的问题，根据blob大小判断
-              if (blob.size == 0) {
-                layer.msg('服务器没找到此文件，请联系管理员!');
-              } else {
-                //通过url去下载
-                elink.href = URL.createObjectURL(blob);
-                document.body.appendChild(elink);
-                elink.click();
-                document.body.removeChild(elink);
-              }
-            }
-
-          };
-          xmlResquest.send();
-          break;
+          window.location.href = "/api/file/download/" + data.id;
+          // // 获取XMLHttpRequest
+          // var xmlResquest = new XMLHttpRequest();
+          // //  发起请求
+          // xmlResquest.open("GET", "/api/file/" + data.id, true);
+          // xmlResquest.setRequestHeader("authorization", CoreUtil.getData("access_token"));
+          // xmlResquest.responseType = "blob";
+          // //  返回
+          // xmlResquest.onload = function (oEvent) {
+          //   // alert(this.status);
+          //   if (this.status == 200) {
+          //     var content = xmlResquest.response;
+          //     // 组装a标签
+          //     var elink = document.createElement("a");
+          //     //设置文件下载路径
+          //     elink.download = data.fileName;
+          //     elink.style.display = "none";
+          //     //把后端response响应二进制文件放到blob
+          //     var blob = new Blob([content]);
+          //     //解决下载不存在文件的问题，根据blob大小判断
+          //     if (blob.size == 0) {
+          //       layer.msg('服务器没找到此文件，请联系管理员!');
+          //     } else {
+          //       //通过url去下载
+          //       elink.href = URL.createObjectURL(blob);
+          //       document.body.appendChild(elink);
+          //       elink.click();
+          //       document.body.removeChild(elink);
+          //     }
+          //   }
+          //
+          // };
+          // xmlResquest.send();
+          // break;
       }
     });
 

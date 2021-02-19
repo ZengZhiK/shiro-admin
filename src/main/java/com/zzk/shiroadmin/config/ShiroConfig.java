@@ -68,6 +68,9 @@ public class ShiroConfig {
         // druid sql监控配置
         filterChainDefinitionMap.put("/druid/**", "anon");
 
+        // 下载接口放行
+        filterChainDefinitionMap.put("/api/file/download/**","anon");
+
         // 静态资源
 //        hashMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/images/**", "anon");
