@@ -69,7 +69,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/druid/**", "anon");
 
         // 下载接口放行
-        filterChainDefinitionMap.put("/api/file/download/**","anon");
+//        filterChainDefinitionMap.put("/api/file/download/**","anon");
 
         // 静态资源
 //        hashMap.put("/favicon.ico", "anon");
