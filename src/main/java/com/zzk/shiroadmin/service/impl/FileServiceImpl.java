@@ -27,6 +27,9 @@ public class FileServiceImpl implements FileService {
     @Value("${file.path}")
     private String filePath;
 
+    @Value("${file.base-url}")
+    private String baseUrl;
+
     @Autowired
     private SysFileMapper sysFileMapper;
 
@@ -47,6 +50,8 @@ public class FileServiceImpl implements FileService {
             throw new BusinessException(BusinessExceptionType.FILE_UPLOAD_ERROR);
         }
 
+        String fileUrl = baseUrl + fileName;
+
         SysFile sysFile = new SysFile();
         sysFile.setId(UUID.randomUUID().toString());
         sysFile.setFileName(fileName);
@@ -54,7 +59,7 @@ public class FileServiceImpl implements FileService {
         sysFile.setExtensionName(extensionName);
         sysFile.setCreateId(userId);
         sysFile.setType(type);
-        sysFile.setFileUrl("");
+        sysFile.setFileUrl(fileUrl);
         sysFile.setSize(FileUtils.byteCountToDisplaySize(file.getSize()));
         int i = sysFileMapper.insertSelective(sysFile);
         if (i != 1) {

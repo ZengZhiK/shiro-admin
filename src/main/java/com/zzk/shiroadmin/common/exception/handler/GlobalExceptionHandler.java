@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +91,12 @@ public class GlobalExceptionHandler {
     public AjaxResponse handleUnauthorizedException(UnauthorizedException e) {
         log.error("授权失败: {}", e.toString());
         return AjaxResponse.error(new BusinessException(BusinessExceptionType.AUTHORIZATION_ERROR));
+    }
+
+    @ExceptionHandler({MaxUploadSizeExceededException.class})
+    public AjaxResponse handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.error("单个文件上传过大: {}", e.toString());
+        return AjaxResponse.error(new BusinessException(BusinessExceptionType.FILE_TOO_LARGE_ERROR));
     }
 
     /**

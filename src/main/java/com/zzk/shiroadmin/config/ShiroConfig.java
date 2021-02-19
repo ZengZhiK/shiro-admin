@@ -75,6 +75,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/layui/**", "anon");
         filterChainDefinitionMap.put("/treetable-lay/**", "anon");
+        filterChainDefinitionMap.put("/upload/image/**", "anon");
 
         // 测试资源
         filterChainDefinitionMap.put("/test/**", "anon");
