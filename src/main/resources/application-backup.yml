@@ -1,5 +1,9 @@
 server:
   port: 8080
+  # 解决文件过大 全局异常监控到后但是前端没有响应
+  tomcat:
+    max-swallow-size: -1
+
 spring:
   application:
     name: shiro-admin
@@ -62,13 +66,19 @@ spring:
         min-idle: 0
   thymeleaf:
     cache: false
+  servlet:
+    multipart:
+      # 单文件最大支持文件大小
+      max-file-size: 10MB
+      # 文件总大小最大支持文件大小
+      max-request-size: 10MB
 
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 
 logging:
-  #  path: logs
-  #  file: ${logging.path}/${spring.application.name}.log
+    path: logs
+    file: ${logging.path}/${spring.application.name}.log
   level:
     root: error
     com.zzk.shiroadmin: debug
@@ -83,3 +93,8 @@ jwt:
   refreshTokenExpireTime: PT8H
   refreshTokenExpireAppTime: P30D
   issuer: zzk
+
+file:
+  path: E:\1_Code\1_Java\shiro-admin\images\
+  static-path: /upload/image/**
+  base-url: http://127.0.0.1:8080/upload/image/
