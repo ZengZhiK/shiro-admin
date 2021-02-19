@@ -6,6 +6,7 @@ import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.model.entity.SysRotationChart;
 import com.zzk.shiroadmin.model.vo.req.RotationChartAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.RotationChartUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.req.RotationPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.RotationChartService;
@@ -13,10 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -50,6 +48,17 @@ public class RotationChartController {
         String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
         String id = JwtTokenUtils.getUserId(accessToken);
         rotationChartService.addRotationChart(vo, id);
+        return AjaxResponse.success();
+    }
+
+    @LogPrint(description = "修改轮播图数据接口")
+    @ApiOperation(value = "修改轮播图数据接口")
+    @PutMapping("/update")
+    @RequiresPermissions("sys:rotation:update")
+    public AjaxResponse updateRotation(@RequestBody @Valid RotationChartUpdateReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String id = JwtTokenUtils.getUserId(accessToken);
+        rotationChartService.updateRotationChart(vo, id);
         return AjaxResponse.success();
     }
 }

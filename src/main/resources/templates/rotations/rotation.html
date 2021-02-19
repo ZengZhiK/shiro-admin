@@ -79,6 +79,10 @@
     </button>
   </div>
 </script>
+<!--编辑轮播图按钮-->
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update" shiro:hasPermission="sys:rotation:update">编辑</a>
+</script>
 <script>
   layui.use(['table', 'laypage', 'layer', 'jquery', 'form', 'upload'], function () {
     var table = layui.table;
@@ -155,7 +159,7 @@
                 return CoreUtil.formattime(item.createTime);
               }
             },
-            {title: '操作', width: 250}
+            {title: '操作', width: 250, toolbar: '#tool'}
           ]
         ]
         , data: data
@@ -201,6 +205,17 @@
           //新增用户无权限提示
           layer.msg("抱歉！您暂无配置轮播图的权限");
         });
+      } else {
+        CoreUtil.sendAjax("/api/rotation/update", JSON.stringify(data.field), function (res) {
+          //显示表格
+          $(".rotation_table_div").show();
+          //隐藏编辑窗口
+          $(".operation_rotation").hide();
+          $(".layui-laypage-btn").click();
+        }, "PUT", false, function (res) {
+          //更新用户无权限提示
+          layer.msg("抱歉！您暂无编辑轮播图的权限");
+        });
       }
       return false;
     });
@@ -245,6 +260,27 @@
       $(".operation_rotation").hide();
       //可以防止在表单事件操作后自动刷新
       return false;
+    });
+
+    //操作项事件
+    table.on('tool(rotation_table)', function (obj) {
+      switch (obj.event) {
+        case 'update':
+          $(".title").html("编辑轮播图信息");
+          //显示编辑窗口
+          $(".operation_rotation").show();
+          //隐藏表格
+          $(".rotation_table_div").hide();
+          $(".operation_rotation input[name=id]").val(obj.data.id);
+          $(".operation_rotation input[name=name]").val(obj.data.name);
+          $(".operation_rotation input[name=url]").val(obj.data.url);
+          $(".operation_rotation input[name=fileUrl]").val(obj.data.fileUrl);
+          $(".operation_rotation input[name=sort]").val(obj.data.sort);
+          $(".operation_rotation input[name=description]").val(obj.data.description);
+          $('#rotationImage').attr('src', obj.data.fileUrl);
+          $("#rotationText").val("");
+          break;
+      }
     });
 
   });

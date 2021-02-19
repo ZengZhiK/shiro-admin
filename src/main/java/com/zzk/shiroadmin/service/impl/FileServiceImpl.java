@@ -104,4 +104,18 @@ public class FileServiceImpl implements FileService {
             }
         }
     }
+
+    @Override
+    public void deleteByFileUrl(String fileUrl) {
+        sysFileMapper.deleteByFileUrl(fileUrl);
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        deleteRealFile(fileName);
+    }
+
+    private void deleteRealFile(String fileName) {
+        File file = FileUtils.getFile(filePath, fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 }

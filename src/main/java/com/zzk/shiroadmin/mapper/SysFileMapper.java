@@ -14,4 +14,6 @@ public interface SysFileMapper {
     int updateByPrimaryKeySelective(SysFile record);
 
     int updateByPrimaryKey(SysFile record);
+
+    int deleteByFileUrl(String fileUrl);
 }

@@ -27,4 +27,11 @@ public interface FileService {
      * @param response
      */
     void download(String fileId, HttpServletResponse response);
+
+    /**
+     * 文件删除
+     *
+     * @param fileUrl
+     */
+    void deleteByFileUrl(String fileUrl);
 }
