@@ -71,17 +71,23 @@
   <div id="laypage" class="layui-laypage-btn"></div>
 </div>
 </body>
-<!-- 轮播图新增按钮 -->
+<!-- 轮播图新增、批量删除按钮 -->
 <script type="text/html" id="toolbar">
   <div class="layui-btn-group">
     <button type="button" class="layui-btn" lay-event="add" shiro:hasPermission="sys:rotation:add">
       <i class="layui-icon">&#xe608;</i> 新增轮播图
     </button>
   </div>
+  <div class="layui-btn-group">
+    <button type="button" class="layui-btn" lay-event="del" shiro:hasPermission="sys:rotation:delete">
+      <i class="layui-icon">&#xe608;</i> 批量删除
+    </button>
+  </div>
 </script>
-<!--编辑轮播图按钮-->
+<!--编辑、删除轮播图按钮-->
 <script type="text/html" id="tool">
   <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update" shiro:hasPermission="sys:rotation:update">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="sys:rotation:delete">删除</a>
 </script>
 <script>
   layui.use(['table', 'laypage', 'layer', 'jquery', 'form', 'upload'], function () {
@@ -188,6 +194,25 @@
           $('#rotationImage').attr('src', "");
           $("#rotationText").val("");
           break;
+        case 'del':
+          var checkStatus = table.checkStatus(obj.config.id);
+          //获取选中的数据
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.msg("请选择要批量删除的轮播图");
+          } else {
+            var fileIds = [];
+            //获取选中文件的id集合
+            $(data).each(function (index, item) {
+              var obj = {
+                id: item.id,
+                fileUrl: item.fileUrl
+              };
+              fileIds.push(obj);
+            });
+            tipDialog(fileIds);
+          }
+          break;
       }
     });
 
@@ -280,8 +305,34 @@
           $('#rotationImage').attr('src', obj.data.fileUrl);
           $("#rotationText").val("");
           break;
+        case 'del':
+          var fileIds = [];
+          var obj = {
+            id: obj.data.id,
+            fileUrl: obj.data.fileUrl
+          };
+          fileIds.push(obj);
+          tipDialog(fileIds);
+          break;
       }
     });
+
+    //删除前确认对话框
+    var tipDialog = function (fileIds) {
+      layer.open({
+        content: '确定要删除么',
+        yes: function (index, layero) {
+          layer.close(index); //如果设定了yes回调，需进行手工关闭
+          CoreUtil.sendAjax("/api/rotation/delete", JSON.stringify(fileIds), function (res) {
+            layer.msg(res.msg);
+            $(".layui-laypage-btn").click();
+          }, "DELETE", false, function (res) {
+            //无权限删除操作日志提示
+            layer.msg("抱歉！您暂无删除轮播图文件的权限");
+          });
+        }
+      });
+    }
 
   });
 </script>

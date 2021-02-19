@@ -7,6 +7,7 @@ import com.zzk.shiroadmin.common.utils.PageUtils;
 import com.zzk.shiroadmin.mapper.SysRotationChartMapper;
 import com.zzk.shiroadmin.model.entity.SysRotationChart;
 import com.zzk.shiroadmin.model.vo.req.RotationChartAddReqVO;
+import com.zzk.shiroadmin.model.vo.req.RotationChartDeleteReqVO;
 import com.zzk.shiroadmin.model.vo.req.RotationChartUpdateReqVO;
 import com.zzk.shiroadmin.model.vo.req.RotationPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
@@ -15,6 +16,7 @@ import com.zzk.shiroadmin.service.RotationChartService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -73,6 +75,19 @@ public class RotationChartServiceImpl implements RotationChartService {
         int count = sysRotationChartMapper.updateByPrimaryKeySelective(sysRotationChart);
         if (count != 1) {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deletedRotation(List<RotationChartDeleteReqVO> vos) {
+        int i = sysRotationChartMapper.batchDeletedRotation(vos);
+        if (i == 0) {
+            throw new BusinessException(BusinessExceptionType.DATA_ERROR);
+        }
+        //删除文件信息
+        for (RotationChartDeleteReqVO vo : vos) {
+            fileService.deleteByFileUrl(vo.getFileUrl());
         }
     }
 }

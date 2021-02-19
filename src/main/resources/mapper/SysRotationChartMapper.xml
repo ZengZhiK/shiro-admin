@@ -158,4 +158,14 @@
     from sys_rotation_chart
     order by sort desc
   </select>
+
+  <!-- 批量轮播图 -->
+  <delete id="batchDeletedRotation" parameterType="com.zzk.shiroadmin.model.vo.req.RotationChartDeleteReqVO">
+    delete
+    from sys_rotation_chart
+    where id in
+    <foreach collection="vos" item="item" open="(" separator="," close=")">
+      #{item.id}
+    </foreach>
+  </delete>
 </mapper>
