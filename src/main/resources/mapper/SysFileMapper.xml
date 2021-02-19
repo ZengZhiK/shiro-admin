@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzk.shiroadmin.mapper.SysFileMapper">
+  <resultMap id="BaseResultMap" type="com.zzk.shiroadmin.model.entity.SysFile">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="extension_name" jdbcType="VARCHAR" property="extensionName" />
+    <result column="original_name" jdbcType="VARCHAR" property="originalName" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="size" jdbcType="VARCHAR" property="size" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, file_url, file_name, extension_name, original_name, `type`, `size`, create_id, 
+    create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_file
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_file
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zzk.shiroadmin.model.entity.SysFile">
+    insert into sys_file (id, file_url, file_name, 
+      extension_name, original_name, `type`, 
+      `size`, create_id, create_time
+      )
+    values (#{id,jdbcType=VARCHAR}, #{fileUrl,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{extensionName,jdbcType=VARCHAR}, #{originalName,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, 
+      #{size,jdbcType=VARCHAR}, #{createId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zzk.shiroadmin.model.entity.SysFile">
+    insert into sys_file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="extensionName != null">
+        extension_name,
+      </if>
+      <if test="originalName != null">
+        original_name,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="size != null">
+        `size`,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="extensionName != null">
+        #{extensionName,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zzk.shiroadmin.model.entity.SysFile">
+    update sys_file
+    <set>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="extensionName != null">
+        extension_name = #{extensionName,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        original_name = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        `size` = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zzk.shiroadmin.model.entity.SysFile">
+    update sys_file
+    set file_url = #{fileUrl,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      extension_name = #{extensionName,jdbcType=VARCHAR},
+      original_name = #{originalName,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=TINYINT},
+      `size` = #{size,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

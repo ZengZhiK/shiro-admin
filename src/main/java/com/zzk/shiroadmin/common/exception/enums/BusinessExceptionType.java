@@ -19,6 +19,7 @@ public enum BusinessExceptionType {
 
     DATA_ERROR(4000001, "传入数据异常"),
     PARENT_DEPT_IS_NULL_ERROR(4000002, "父级部门不存在错误！"),
+    FILE_UPLOAD_ERROR(4000003, "文件上传失败"),
 
     OPERATION_MENU_PERMISSION_CATALOG_ERROR(4000006, "操作后的菜单类型是目录，所属菜单必须为默认顶级菜单或者目录"),
     OPERATION_MENU_PERMISSION_MENU_ERROR(4000007, "操作后的菜单类型是菜单，所属菜单必须为目录类型"),
