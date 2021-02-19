@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 文件 前端控制器
@@ -37,5 +38,13 @@ public class FileController {
         Integer type = request.getIntHeader(Constants.FILE_TYPE);
         fileService.upload(file, userId, type);
         return AjaxResponse.success();
+    }
+
+    @LogSave(title = "文件模块", action = "文件下载接口")
+    @LogPrint(description = "文件下载接口")
+    @PostMapping("/download'")
+    @ApiOperation(value = "文件下载接口")
+    public void download(@RequestParam("fileId") String fileId, HttpServletResponse response) {
+        fileService.download(fileId, response);
     }
 }
