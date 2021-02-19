@@ -77,9 +77,6 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/treetable-lay/**", "anon");
         filterChainDefinitionMap.put("/upload/image/**", "anon");
 
-        // 测试资源
-        filterChainDefinitionMap.put("/test/**", "anon");
-
         filterChainDefinitionMap.put("/**", "token,authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
