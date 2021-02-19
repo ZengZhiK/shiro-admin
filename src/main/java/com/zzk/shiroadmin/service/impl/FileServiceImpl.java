@@ -1,11 +1,14 @@
 package com.zzk.shiroadmin.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.zzk.shiroadmin.common.exception.BusinessException;
 import com.zzk.shiroadmin.common.exception.enums.BusinessExceptionType;
+import com.zzk.shiroadmin.common.utils.PageUtils;
 import com.zzk.shiroadmin.mapper.SysFileMapper;
 import com.zzk.shiroadmin.model.entity.SysFile;
+import com.zzk.shiroadmin.model.vo.req.FilePageReqVO;
+import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.FileService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -117,5 +120,12 @@ public class FileServiceImpl implements FileService {
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    @Override
+    public PageVO<SysFile> pageInfo(FilePageReqVO vo, String userId) {
+        PageHelper.startPage(vo.getPageNum(),vo.getPageSize());
+        List<SysFile> sysFiles = sysFileMapper.selectByUserId(userId);
+        return PageUtils.getPageVO(sysFiles);
     }
 }

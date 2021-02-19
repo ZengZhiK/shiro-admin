@@ -1,6 +1,7 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.annotation.LogSave;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
@@ -34,6 +35,7 @@ public class RotationChartController {
     @Autowired
     private RotationChartService rotationChartService;
 
+    @LogSave(title = "轮播图模块", action = "轮播图展示接口")
     @LogPrint(description = "轮播图展示接口")
     @ApiOperation(value = "轮播图展示接口")
     @GetMapping
@@ -41,6 +43,7 @@ public class RotationChartController {
         return rotationChartService.selectAll();
     }
 
+    @LogSave(title = "轮播图模块", action = "轮播图数据分页获取接口")
     @LogPrint(description = "轮播图数据分页获取接口")
     @ApiOperation(value = "轮播图数据分页获取接口")
     @PostMapping
@@ -49,6 +52,7 @@ public class RotationChartController {
         return rotationChartService.pageInfo(vo);
     }
 
+    @LogSave(title = "轮播图模块", action = "轮播图新增接口")
     @LogPrint(description = "轮播图新增接口")
     @ApiOperation(value = "轮播图新增接口")
     @PostMapping("/add")
@@ -60,6 +64,7 @@ public class RotationChartController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "轮播图模块", action = "轮播图数据修改接口")
     @LogPrint(description = "轮播图数据修改接口")
     @ApiOperation(value = "轮播图数据修改接口")
     @PutMapping("/update")
@@ -71,6 +76,7 @@ public class RotationChartController {
         return AjaxResponse.success();
     }
 
+    @LogSave(title = "轮播图模块", action = "轮播图删除接口")
     @LogPrint(description = "轮播图删除接口")
     @ApiOperation(value = "轮播图删除接口")
     @DeleteMapping("/delete")

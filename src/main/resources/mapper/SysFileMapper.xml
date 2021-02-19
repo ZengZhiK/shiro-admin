@@ -144,5 +144,12 @@
     delete
     from sys_file
     where file_url=#{fileUrl}
-</delete>
+  </delete>
+  <!-- 根据创建者查询数据 -->
+  <select id="selectByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from sys_file
+    where create_id=#{userId}
+  </select>
 </mapper>

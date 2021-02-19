@@ -1,5 +1,8 @@
 package com.zzk.shiroadmin.service;
 
+import com.zzk.shiroadmin.model.entity.SysFile;
+import com.zzk.shiroadmin.model.vo.req.FilePageReqVO;
+import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,4 +37,13 @@ public interface FileService {
      * @param fileUrl
      */
     void deleteByFileUrl(String fileUrl);
+
+    /**
+     * 分页查询文件数据
+     *
+     * @param vo
+     * @param userId
+     * @return
+     */
+    PageVO<SysFile> pageInfo(FilePageReqVO vo, String userId);
 }

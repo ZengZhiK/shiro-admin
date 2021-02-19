@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="_fragments :: head(~{::title}, ~{}, ~{})">
+  <title>我的文件管理-ShiroAdmin</title>
+</head>
+<body>
+<!-- 文件表格 -->
+<div class="file_table_div">
+  <table class="layui-hide" id="file_table" lay-filter="file_table"></table>
+  <div id="laypage" class="layui-laypage-btn"></div>
+</div>
+</body>
+<!-- 文件下载按钮 -->
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+</script>
+<script>
+  layui.use(['table', 'laypage', 'jquery', 'layer'], function () {
+    var table = layui.table;
+    var laypage = layui.laypage;
+    var $ = layui.jquery;
+    var layer = layui.layer;
+
+    var searchParam = {
+      pageNum: 1,
+      pageSize: 10
+    };
+
+    CoreUtil.sendAjax("/api/file", JSON.stringify(searchParam), function (res) {
+      laypageTable(res.data.totalRows, searchParam.pageNum);
+      if (res.data.list != null) {
+        loadTable(res.data.list);
+      }
+    }, "POST", false);
+
+    //渲染分页插件
+    var laypageTable = function (count, currentPage) {
+      laypage.render({
+        elem: 'laypage'
+        , count: count
+        , limit: searchParam.pageSize
+        , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+        , curr: location.hash.replace('#!currentPage=', '') //获取起始页
+        , hash: 'currentPage' //自定义hash值
+        , jump: function (obj, first) {
+          if (!first) {
+            searchParam.pageNum = obj.curr;
+            searchParam.pageSize = obj.limit;
+            CoreUtil.sendAjax("/api/files", JSON.stringify(searchParam), function (res) {
+              if (res.data.list != null) {
+                loadTable(res.data.list);
+                laypageTable(res.data.totalRows, searchParam.pageNum);
+              }
+            }, "POST");
+          }
+        }
+      });
+    };
+
+    //渲染table
+    var loadTable = function (data) {
+      //展示已知数据
+      table.render({
+        elem: '#file_table'
+        , cols: [
+          [
+            {type: 'checkbox', fixed: 'left'},
+            {field: 'id', title: 'ID', width: 300, sort: true},
+            {field: 'fileName', title: '文件名称', width: 200},
+            {field: 'extensionName', title: '文件类型', width: 300},
+            {field: 'originalName', title: '文件原始名称', width: 300},
+            {
+              field: 'type', title: '文件类型', minWidth: 120, templet: function (item) {
+                if (item.type != undefined && item.type == 3) {
+                  return "视频"
+                } else if (item.type != undefined && item.type == 2) {
+                  return "轮播图";
+                } else {
+                  return "文档类型";
+                }
+              }
+            },
+            {
+              field: 'createTime', title: '创建时间', minWidth: 120, templet: function (item) {
+                return CoreUtil.formattime(item.createTime);
+              }
+            },
+            {field: 'size', title: '文件大小', width: 300}
+            ,
+            {title: '操作', width: 250, toolbar: '#tool'}
+          ]
+        ]
+        , data: data
+        , even: true
+        , limit: data.length
+        , limits: [10, 20, 30, 40, 50]
+
+      });
+    };
+
+    //行监听工具条
+    table.on('tool(file_table)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+      var data = obj.data; //获得当前行数据
+      var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+      switch (layEvent) {
+        case 'download':
+          // window.location.href="/api/file/"+data.id;
+          // 获取XMLHttpRequest
+          var xmlResquest = new XMLHttpRequest();
+          //  发起请求
+          xmlResquest.open("GET", "/api/file/" + data.id, true);
+          xmlResquest.setRequestHeader("authorization", CoreUtil.getData("access_token"));
+          xmlResquest.responseType = "blob";
+          //  返回
+          xmlResquest.onload = function (oEvent) {
+            // alert(this.status);
+            if (this.status == 200) {
+              var content = xmlResquest.response;
+              // 组装a标签
+              var elink = document.createElement("a");
+              //设置文件下载路径
+              elink.download = data.fileName;
+              elink.style.display = "none";
+              //把后端response响应二进制文件放到blob
+              var blob = new Blob([content]);
+              //解决下载不存在文件的问题，根据blob大小判断
+              if (blob.size == 0) {
+                layer.msg('服务器没找到此文件，请联系管理员!');
+              } else {
+                //通过url去下载
+                elink.href = URL.createObjectURL(blob);
+                document.body.appendChild(elink);
+                elink.click();
+                document.body.removeChild(elink);
+              }
+            }
+
+          };
+          xmlResquest.send();
+          break;
+      }
+    });
+
+  })
+</script>
+</html>

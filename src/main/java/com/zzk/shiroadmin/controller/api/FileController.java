@@ -6,6 +6,9 @@ import com.zzk.shiroadmin.common.constant.Constants;
 import com.zzk.shiroadmin.common.constant.JwtConstants;
 import com.zzk.shiroadmin.common.utils.AjaxResponse;
 import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
+import com.zzk.shiroadmin.model.entity.SysFile;
+import com.zzk.shiroadmin.model.vo.req.FilePageReqVO;
+import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +31,16 @@ import javax.servlet.http.HttpServletResponse;
 public class FileController {
     @Autowired
     private FileService fileService;
+
+    @LogSave(title = "文件模块", action = "我的文件分页获取接口")
+    @LogPrint(description = "我的文件分页获取接口")
+    @PostMapping
+    @ApiOperation(value = "我的文件分页获取接口")
+    public PageVO<SysFile> pageInfo(@RequestBody FilePageReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String userId = JwtTokenUtils.getUserId(accessToken);
+        return fileService.pageInfo(vo, userId);
+    }
 
     @LogSave(title = "文件模块", action = "文件上传接口")
     @LogPrint(description = "文件上传接口")

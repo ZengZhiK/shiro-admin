@@ -2,6 +2,8 @@ package com.zzk.shiroadmin.mapper;
 
 import com.zzk.shiroadmin.model.entity.SysFile;
 
+import java.util.List;
+
 public interface SysFileMapper {
     int deleteByPrimaryKey(String id);
 
@@ -16,4 +18,6 @@ public interface SysFileMapper {
     int updateByPrimaryKey(SysFile record);
 
     int deleteByFileUrl(String fileUrl);
+
+    List<SysFile> selectByUserId(String userId);
 }

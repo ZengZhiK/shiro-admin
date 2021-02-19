@@ -127,11 +127,17 @@ public class ViewController {
 
     /**
      * 跳转至轮播图前台展示页面
-     *
-     * @return
      */
     @GetMapping("/rotations/show")
     public String rotationShow() {
         return "rotations/rotation_show";
+    }
+
+    /**
+     * 跳转至我的文件页面
+     */
+    @GetMapping("/files")
+    public String file() {
+        return "files/my_file";
     }
 }
