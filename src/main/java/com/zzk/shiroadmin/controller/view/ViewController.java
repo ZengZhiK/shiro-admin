@@ -116,4 +116,12 @@ public class ViewController {
     public String userPwd() {
         return "users/pwd_edit";
     }
+
+    /**
+     * 跳转至轮播图管理页面
+     */
+    @GetMapping("/rotations")
+    public String rotations() {
+        return "rotations/rotation";
+    }
 }
