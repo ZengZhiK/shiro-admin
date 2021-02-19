@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### Custom ###
-log/
+logs/
 application.yml
 generatorConfig.xml
