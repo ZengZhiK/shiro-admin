@@ -18,7 +18,7 @@ public interface FileService {
      * @param userId
      * @param type
      */
-    void upload(MultipartFile file, String userId, Integer type);
+    String upload(MultipartFile file, String userId, Integer type);
 
     /**
      * 文件下载

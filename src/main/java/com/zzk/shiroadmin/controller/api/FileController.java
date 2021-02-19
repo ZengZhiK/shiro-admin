@@ -36,8 +36,8 @@ public class FileController {
     public AjaxResponse upload(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) {
         String userId = JwtTokenUtils.getUserId(request.getHeader(JwtConstants.ACCESS_TOKEN));
         Integer type = request.getIntHeader(Constants.FILE_TYPE);
-        fileService.upload(file, userId, type);
-        return AjaxResponse.success();
+        String fileUrl = fileService.upload(file, userId, type);
+        return AjaxResponse.success(fileUrl);
     }
 
     @LogSave(title = "文件模块", action = "文件下载接口")

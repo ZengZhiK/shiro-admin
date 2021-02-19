@@ -1,21 +1,93 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
-<head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{})">
+<head th:replace="_fragments :: head(~{::title}, ~{::link}, ~{::style})">
   <title>轮播图管理-ShiroAdmin</title>
   <link rel="stylesheet" th:href="@{/css/custom.form.css}">
+  <style type="text/css">
+    .layui-upload-img {
+      width: 92px;
+      height: 92px;
+      margin: 0 10px 10px 0;
+      padding: 0 18px 0px 108px;
+    }
+  </style>
 </head>
 <body>
+<!-- 轮播图新增表单 -->
+<div class="panel panel-default operation_rotation" hidden>
+  <div class="panel-heading title"></div>
+  <div class="layui-card-body">
+    <form class="layui-form " action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px">
+      <input name="id" hidden/>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" placeholder="请输入轮播图名称" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">广告地址</label>
+        <div class="layui-input-block">
+          <input type="text" name="url" placeholder="请输入配置广告地址" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">排序号</div>
+        <div class="layui-input-block">
+          <input type="number" name="sort" placeholder="请输入排序号" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">轮播图片</div>
+        <div class="layui-upload">
+          <button type="button" class="layui-btn" id="rotationBtn">上传图片</button>
+          <input type="hidden" id="img_url" name="fileUrl"/>
+          <div class="layui-upload-list">
+            <img class="layui-upload-img" id="rotationImage">
+            <p id="rotationText"></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-form-label ">备注</div>
+        <div class="layui-input-block">
+          <input type="text" name="description" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+          <button class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- 轮播图信息表格 -->
 <div class="rotation_table_div">
   <table class="layui-hide" id="rotation_table" lay-filter="rotation_table"></table>
   <div id="laypage" class="layui-laypage-btn"></div>
 </div>
 </body>
+<!-- 轮播图新增按钮 -->
+<script type="text/html" id="toolbar">
+  <div class="layui-btn-group">
+    <button type="button" class="layui-btn" lay-event="add" shiro:hasPermission="sys:rotation:add">
+      <i class="layui-icon">&#xe608;</i> 新增轮播图
+    </button>
+  </div>
+</script>
 <script>
-  layui.use(['table', 'laypage', 'jquery', 'layer'], function () {
+  layui.use(['table', 'laypage', 'layer', 'jquery', 'form', 'upload'], function () {
     var table = layui.table;
-    var laypage = layui.laypage
+    var laypage = layui.laypage;
     var layer = layui.layer;
     var $ = layui.jquery;
+    var form = layui.form;
+    var upload = layui.upload;
+
     var searchParam = {
       pageNum: 1,
       pageSize: 10,
@@ -90,8 +162,91 @@
         , even: true
         , limit: data.length
         , limits: [10, 20, 30, 40, 50]
+        , toolbar: '#toolbar'
       });
     };
+
+    //toolbar 表头工具栏操作事件
+    table.on('toolbar(rotation_table)', function (obj) {
+      switch (obj.event) {
+        case 'add':
+          $(".title").html("配置轮播图");
+          //显示编辑窗口
+          $(".operation_rotation").show();
+          //隐藏表格
+          $(".rotation_table_div").hide();
+          $(".operation_rotation input[name=id]").val("");
+          $(".operation_rotation input[name=name]").val("");
+          $(".operation_rotation input[name=url]").val("");
+          $(".operation_rotation input[name=fileUrl]").val("");
+          $(".operation_rotation input[name=sort]").val("");
+          $(".operation_rotation input[name=description]").val("");
+          $('#rotationImage').attr('src', "");
+          $("#rotationText").val("");
+          break;
+      }
+    });
+
+    //监听提交
+    form.on('submit(submit)', function (data) {
+      //新增
+      if (data.field.id === undefined || data.field.id === null || data.field.id === "") {
+        CoreUtil.sendAjax("/api/rotation/add", JSON.stringify(data.field), function (res) {
+          //显示表格
+          $(".rotation_table_div").show();
+          //隐藏编辑窗口
+          $(".operation_rotation").hide();
+          $(".layui-laypage-btn").click();
+        }, "POST", false, function (res) {
+          //新增用户无权限提示
+          layer.msg("抱歉！您暂无配置轮播图的权限");
+        });
+      }
+      return false;
+    });
+
+    //普通图片上传
+    var uploadInst = upload.render({
+      elem: '#rotationBtn'
+      , url: '/api/file/upload'
+      , headers: {
+        "file-type": 2,
+        "accessToken": CoreUtil.getData("access_token")
+      }
+      , before: function (obj) {
+        //预读本地文件示例，不支持ie8
+        obj.preview(function (index, file, result) {
+          $('#rotationImage').attr('src', result); //图片链接（base64）
+        });
+      }
+      , done: function (res) {
+        //上传成功
+        if (res.code == 200) {
+          $("#img_url").val(res.data);
+        } else {
+          layer.msg(res.msg);
+        }
+      }
+      , error: function () {
+        //演示失败状态，并实现重传
+        var demoText = $('#rotationText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function () {
+          uploadInst.upload();
+        });
+      }
+    });
+
+    //返回列表
+    $("#btn_cancel").click(function () {
+      //显示表格
+      $(".rotation_table_div").show();
+      //隐藏编辑窗口
+      $(".operation_rotation").hide();
+      //可以防止在表单事件操作后自动刷新
+      return false;
+    });
+
   });
 </script>
 </html>

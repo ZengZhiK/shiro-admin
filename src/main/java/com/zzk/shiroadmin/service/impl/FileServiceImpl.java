@@ -40,7 +40,7 @@ public class FileServiceImpl implements FileService {
     private SysFileMapper sysFileMapper;
 
     @Override
-    public void upload(MultipartFile file, String userId, Integer type) {
+    public String upload(MultipartFile file, String userId, Integer type) {
         String originalFilename = file.getOriginalFilename();
         String extensionName = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         String fileId = UUID.randomUUID().toString();
@@ -71,6 +71,8 @@ public class FileServiceImpl implements FileService {
         if (i != 1) {
             throw new BusinessException(BusinessExceptionType.DATA_ERROR);
         }
+
+        return fileUrl;
     }
 
     @Override

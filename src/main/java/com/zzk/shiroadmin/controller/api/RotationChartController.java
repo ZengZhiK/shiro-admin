@@ -1,7 +1,11 @@
 package com.zzk.shiroadmin.controller.api;
 
 import com.zzk.shiroadmin.common.annotation.LogPrint;
+import com.zzk.shiroadmin.common.constant.JwtConstants;
+import com.zzk.shiroadmin.common.utils.AjaxResponse;
+import com.zzk.shiroadmin.common.utils.JwtTokenUtils;
 import com.zzk.shiroadmin.model.entity.SysRotationChart;
+import com.zzk.shiroadmin.model.vo.req.RotationChartAddReqVO;
 import com.zzk.shiroadmin.model.vo.req.RotationPageReqVO;
 import com.zzk.shiroadmin.model.vo.resp.PageVO;
 import com.zzk.shiroadmin.service.RotationChartService;
@@ -13,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * 轮播图 前端控制器
@@ -27,11 +34,22 @@ public class RotationChartController {
     @Autowired
     private RotationChartService rotationChartService;
 
-    @LogPrint(description = "日志数据分页获取接口")
-    @ApiOperation(value = "分页获取轮播图信息")
+    @LogPrint(description = "轮播图数据分页获取接口")
+    @ApiOperation(value = "轮播图数据分页获取接口")
     @PostMapping
     @RequiresPermissions("sys:rotation:list")
     public PageVO<SysRotationChart> pageInfo(@RequestBody RotationPageReqVO vo) {
         return rotationChartService.pageInfo(vo);
+    }
+
+    @LogPrint(description = "轮播图新增接口")
+    @ApiOperation(value = "轮播图新增接口")
+    @PostMapping("/add")
+    @RequiresPermissions("sys:rotation:add")
+    public AjaxResponse addRotation(@RequestBody @Valid RotationChartAddReqVO vo, HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtConstants.ACCESS_TOKEN);
+        String id = JwtTokenUtils.getUserId(accessToken);
+        rotationChartService.addRotationChart(vo, id);
+        return AjaxResponse.success();
     }
 }
