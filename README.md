@@ -1,6 +1,6 @@
 # ShiroAdmin—基于 RBAC 权限模型和 Shiro 框架的后台权限管理系统
 
-> 本项目地址：https://github.com/ZengZhiK/shiro-admin
+> 本项目GitHub地址：https://github.com/ZengZhiK/shiro-admin
 
 ## 系统功能
 
@@ -20,8 +20,15 @@
 
 1、` git clone https://github.com/ZengZhiK/fastanswer.git `把本项目的代码拉取下来，之后右键IntelliJ IDEA 启动，等待maven自动加载包
 
+2、使用MySQL数据库客户端软件（例如SQLyog、Navicat）执行脚本sql/ShiroAdmin.sql创建2、使用MySQL数据库客户端软件（例如SQLyog、Navicat）执行脚本sql/ShiroAdmin.shiro_admin数据库
 
+3、安装并启动Redis
 
+4、重命名`src/main/resources/`目录下的`application-backup.yml`为`application.yml`
+   
+- 需要按实际情况修改如：数据库url、用户名、密码；redis主机、密码；file.path文件上传路径等信息
+
+5、至此配置完毕，点击`com.zzk.shiroadmin.ShiroAdminApplication`启动，在浏览器地址栏输入` http://localhost:8080/ `访问
 
 ## 技术栈
 
@@ -35,7 +42,96 @@
 
 ## 页面展示
 
+- 登录页
+    - 管理员用户名：admin，普通用户用户名查看数据库
+    - 密码：666666，密码都是这个
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/login.png"/>
+</div>
+
 - 首页
 
-- 
+1. 管理员能看到所有内容，拥有最高权限
 
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/admin_index.png"/>
+</div>
+
+2. 普通用户的权限可以被控制，包括是否可以登录、菜单、按钮等
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/user_index.png"/>
+</div>
+
+- 角色管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/role.png"/>
+</div>
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/add&update_role.png"/>
+</div>
+
+- 菜单权限管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/permission.png"/>
+</div>
+
+- 部门管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/department.png"/>
+</div>
+
+- 用户管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/user.png"/>
+</div>
+
+- 日志管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/log.png"/>
+</div>
+
+- 接口管理
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/interface.png"/>
+</div>
+
+- SQL监控
+    - 用户名：admin
+    - 密码：666666，可在application.yml文件修改
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/sql_login.png"/>
+</div>
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/sql_index.png"/>
+</div>
+
+- 我的文件——文件上传下载
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/file.png"/>
+</div>
+
+## Redis缓存
+
+- 查看缓存，可以看到缓存在redis如何储存
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/redis.png"/>
+</div>
+
+- 查看日志（文件或命令行），可查看缓存的命中率
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/log_commandline.png"/>
+</div>
