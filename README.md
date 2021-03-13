@@ -50,6 +50,18 @@
 <img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/login.png"/>
 </div>
 
+采用的是JWT的登录方式，Token保存在浏览器的Session Storage中
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/jwt_token.png"/>
+</div>
+
+解析出来包括Header.Payload.Signature
+
+<div align="center">
+<img src="https://cdn.jsdelivr.net/gh/ZengZhiK/PicBed/ShiroAdmin/jwt_parse.png"/>
+</div>
+
 - 首页
 
 1. 管理员能看到所有内容，拥有最高权限
